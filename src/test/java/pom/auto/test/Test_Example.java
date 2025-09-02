@@ -32,7 +32,7 @@ public class Test_Example {
     public WebDriver driver;
 
     /**
-     * Objeto de la clase {@link Page_CRM} que representa las páginas del sistema CRM.
+     * Objeto de la clase {@link Page} que representa las páginas del sistema CRM.
      * <p>
      * Esta variable se utiliza para realizar operaciones específicas en las páginas
      * del sistema durante la ejecución de pruebas automatizadas. Se inicializa y configura
@@ -137,6 +137,7 @@ public class Test_Example {
         page.visitUrl(page.getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
                 ExternalData.ED_URL_TEST,
                 ExternalData.ED_SOURCE));
+        page.iniciarSesion();
     }
 
 

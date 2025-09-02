@@ -6,13 +6,13 @@
     "evidences": "./src/test/resources/evidencias/",
     "parallel": "tests",
     "threadCount": 20,
-    "urlTest": "",
+    "urlTest": "https://mi3.qa.chileatiende.cl/micha/inicio",
     "browserSize": "--window-size=1920,1080"
   },
   "tests": {
     "example": {
       "active": true,
-      "suiteName": "",
+      "suiteName": "Example",
       "flujo1": {
         "active": true,
         "name": "Flujo 01 - "

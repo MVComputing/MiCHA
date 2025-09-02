@@ -1640,6 +1640,7 @@ public class Base {
         prefs.put(Data.DATA_BROWSER_DOWNLOAD_PROMPT, false);
         prefs.put(Data.DATA_BROWSER_SETTINGS_POPUPS, 0);
         prefs.put(Data.DATA_BROWSER_OPEN_PDF_EXTERNAL, true);
+        prefs.put("profile.password_manager_leak_detection", false);
 
         optionChrome.setExperimentalOption(Data.DATA_BROWSER_DOWNLOAD_PREFS, prefs);
 
