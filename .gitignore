@@ -1,0 +1,16 @@
+/.idea
+/logs
+/target
+/test-output
+/.settings
+/src/test/resources/downloads/*
+/src/test/resources/evidencias/*
+/src/test/resources/suites/*
+/src/test/resources/drivers
+/.mvn
+/.project
+/documentation
+/CHA.iml
+/CHA-Automatizacion-Web.iml
+/allure-report
+/allure-results

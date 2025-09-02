@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Appenders>
+        <!-- Console Appender con colores -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout disableAnsi="false" noConsoleNoAnsi="false"
+                           pattern="%highlight{%d{HH:mm:ss} [%t] [%X{testName}] %-5level %c{1} - %msg%n}{FATAL=red blink, ERROR=red, WARN=yellow, INFO=white, DEBUG=green}" />
+        </Console>
+
+        <!-- File Appender: guarda solo errores -->
+        <File name="File" fileName="logs/CRM.log" append="true">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] [%X{testName}] %-5level %c{1} - %msg%n"/>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Root>
+    </Loggers>
+</Configuration>

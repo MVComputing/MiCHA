@@ -1,0 +1,26 @@
+{
+  "webDriverConfiguration": {
+    "headless": true,
+    "downloads": "src/test/resources/downloads/",
+    "uploads": "./src/test/resources/uploads/",
+    "evidences": "./src/test/resources/evidencias/",
+    "parallel": "tests",
+    "threadCount": 20,
+    "urlTest": "",
+    "browserSize": "--window-size=1920,1080"
+  },
+  "tests": {
+    "example": {
+      "active": true,
+      "suiteName": "",
+      "flujo1": {
+        "active": true,
+        "name": "Flujo 01 - "
+      }
+    }
+  },
+  "archivos": {
+    "archivo1": "src/test/resources/uploads/test.txt",
+    "archivo2": "src/test/resources/uploads/test.txt"
+  }
+}
