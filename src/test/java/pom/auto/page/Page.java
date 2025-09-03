@@ -32,6 +32,8 @@ public class Page extends Base {
             waitForElementToBeClickable(Elements.ELM_MICHA_BUTTON_MI_PERFIL);
             waitForVisibilityOfElementLocated(Elements.ELM_MICHA_LBL_MI_PERFIL_MENSAJE_BIENVENIDA);
             waitForElementToBeClickable(Elements.ELM_MICHA_LINK_MI_PERFIL_EDITAR);
+            waitForVisibilityOfElementLocated(Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_DIRECCION);
+            clearText(Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_DIRECCION);
             sendInputText(getJsonString(ExternalData.ED_MICHA_OBJECT_CONTACTO,
                             ExternalData.ED_MICHA_CONTACTO_DIRECCION, ExternalData.ED_MICHA_SRC),
                     Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_DIRECCION);
