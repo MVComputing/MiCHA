@@ -1739,4 +1739,20 @@ public class Base {
             alert.dismiss();
         }
     }
+
+    public static void switchToNewTab(WebDriver driver) {
+        String originalWindow = driver.getWindowHandle();
+
+        // Espera hasta que haya más de una pestaña abierta
+        new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(d -> d.getWindowHandles().size() > 1);
+
+        // Itera sobre los window handles y cambia a la nueva pestaña
+        for (String windowHandle : driver.getWindowHandles()) {
+            if (!windowHandle.equals(originalWindow)) {
+                driver.switchTo().window(windowHandle);
+                break;
+            }
+        }
+    }
 }

@@ -10,17 +10,52 @@
     "browserSize": "--window-size=1920,1080"
   },
   "tests": {
-    "example": {
+    "micha": {
       "active": true,
-      "suiteName": "Example",
+      "suiteName": "Micha",
       "flujo1": {
         "active": true,
-        "name": "Flujo 01 - "
+        "name": "Flujo 01 - Ingreso en mi perfil y edición de datos de contacto"
+      },
+      "flujo2": {
+        "active": true,
+        "name": "Flujo 02 - Ingreso a Mi registro social de hogares"
+      },
+      "flujo3": {
+        "active": false,
+        "name": "Flujo 03 - Descarga de PDF Informe de deudas"
+      },
+      "flujo4": {
+        "active": true,
+        "name": "Flujo 04 - Ingreso a Comisión para el mercado financiero"
+      },
+      "flujo5": {
+        "active": true,
+        "name": "Flujo 05 - Bonos y beneficios del estado"
+      },
+      "flujo6": {
+        "active": false,
+        "name": "Flujo 06 - Ingreso sitio web SENCE"
+      },
+      "flujo7": {
+        "active": true,
+        "name": "Flujo 07 - Accesos rápidos"
       }
     }
   },
   "archivos": {
     "archivo1": "src/test/resources/uploads/test.txt",
     "archivo2": "src/test/resources/uploads/test.txt"
+  },
+  "credenciales": {
+    "userRun": "444444444",
+    "pass": "testing"
+  },
+  "datosContacto": {
+    "direccion": "ALAMEDA",
+    "region": "METROPOLITANA",
+    "comuna": "SANTIAGO",
+    "fono": "987654321",
+    "email": "test@gmail.com"
   }
 }

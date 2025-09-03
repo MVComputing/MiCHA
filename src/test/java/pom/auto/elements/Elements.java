@@ -22,7 +22,45 @@ public class Elements {
     public static final By ELM_MICHA_TEXTBOX_MI_PERFIL_FONO = By.id("fono");
     public static final By ELM_MICHA_TEXTBOX_MI_PERFIL_EMAIL = By.id("email");
     public static final By ELM_MICHA_BUTTON_MI_PERFIL_GUARDAR = By.xpath("//button[text()=' Guardar']");
-    public static final By ELM_MICHA_LBL_MI_PERFIL_MENSAJE_CAMBIOS_GUARDADOS = By.xpath("//button[text()=' Guardar']");
-
+    public static final By ELM_MICHA_LBL_MI_PERFIL_MENSAJE_CAMBIOS_GUARDADOS =
+            By.xpath("//button[text()=' Guardar']");
+    public static final By ELM_MICHA_RSH_LINK_REGISTRO_SOCIAL =
+            By.xpath("//a[text()='Mi Registro Social de Hogares']");
+    public static final By ELM_MICHA_BUTTON_RSH_REGISTRO_SOCIAL =
+            By.xpath("//button[text()=' Ingresar al RSH ']");
+    public static final By ELM_MICHA_BUTTON_RSH_OBTENER_CARTOLA =
+            By.xpath("//button[text()=' Obtener cartola ']");
+    public static final By ELM_MICHA_LOGO_RSH =
+            By.cssSelector("a.navbar-brand[href='https://www.ventanillaunicasocial.gob.cl']");
+    public static final By ELM_MICHA_DF_LINK_DEUDAS_FINANCIERAS =
+            By.xpath("//a[text()='Mis deudas financieras']");
+    public static final By ELM_MICHA_DF_BUTTON_DESCARGAR =
+            By.xpath("//button[text()=' Descargar']");
+    public static final By ELM_MICHA_DF_BUTTON_CONOCER_DEUDA=
+            By.xpath("//button[text()=' Ir a Conocer tu deuda ']");
+    public static final By ELM_MICHA_DF_LINK_CONTINUAR =
+            By.xpath("//a[text()='Continuar']");
+    public static final By ELM_MICHA_DF_IMG_CONOCE_TU_DEUDA =
+            By.xpath("//img[@alt='logo CMF']");
+    public static final By ELM_MICHA_BS_LINK_BENEFICIOS_SOCIALES =
+            By.xpath("//a[text()='Mis pagos de beneficios sociales']");
+    public static final By ELM_MICHA_BS_LINK_BENEFICIOS_SOCIALES_INFORMATE =
+            By.xpath("//a[text()='infórmate sobre los beneficios del Estado']");
+    public static final By ELM_MICHA_BS_LBL_MENSAJE_BONOS =
+            By.xpath("//h1[text()='Bonos y beneficios del estado']");
+    public static final By ELM_MICHA_AR_LINK_PAGINA_INICIO =
+            By.xpath("//a[text()='Página de inicio']");
+    public static final By ELM_MICHA_AR_LINK_MI_PERFIL =
+            By.xpath("//a[@href='/micha/mi-perfil' and .//h4[text()='Mi perfil']]");
+    public static final By ELM_MICHA_AR_LINK_MI_REGISTRO_SOCIAL =
+            By.xpath("//a[@href='/micha/rsh' and .//h4[text()='Mi Registro Social de Hogares']]");
+    public static final By ELM_MICHA_AR_LINK_MIS_DEUDAS_FINANCIERAS=
+            By.xpath("//a[@href='/micha/mis-deudas' and .//h4[text()='Mis deudas financieras']]");
+    public static final By ELM_MICHA_AR_LINK_MIS_PAGOS_BENEFICIOS_SOCIALES =
+            By.xpath("//a[@href='/micha/mis-pagos' and .//h4[text()='Mis pagos de beneficios sociales']]");
+    public static final By ELM_MICHA_AR_LINK_MIS_CAPACITACIONES =
+            By.xpath("//a[@href='/micha/sence' and .//h4[text()='Mis capacitaciones']]");
+    public static final By ELM_MICHA_AR_LINK_MI_SEGURO_SOCIAL =
+            By.xpath("//a[@href='/micha/mi-seguro-previsional' and .//h4[text()='Mi Seguro Social']]");
 
 }
