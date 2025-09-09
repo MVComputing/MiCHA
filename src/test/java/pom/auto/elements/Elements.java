@@ -69,5 +69,13 @@ public class Elements {
     public static final By ELM_MICHA_MC_BUTTON_CONTINUAR = By.xpath("//button[text()=' Continuar ']");
     public static final By ELM_MICHA_MC_LINK_VALIDATION_SENCE =
             By.xpath("//a[text()='Sobre Sence']");
+    public static final By ELM_MICHA_MSS_LINK_MI_SEGURO_SOCIAL =
+            By.xpath("//a[text()='Mi Seguro Social']");
+    public static final By ELM_MICHA_MSS_BUTTON_DESCARGAR_CERTIFICADO =
+            By.xpath("//button[text()=' Descargar certificado de cotizaciones']");
+    public static final By ELM_MICHA_MSS_BUTTON_REVISAR_INFORMACION =
+            By.xpath("//button[text()=' Revisar información ']");
+    public static final By ELM_MICHA_MSS_LINK_CONTINUAR = By.xpath("//a[text()='Continuar']");
+    public static final By ELM_MICHA_MSS_VALIDATION_SEGURO_SOCIAL = By.xpath("//h1[text()='Seguro Social']");
 
 }

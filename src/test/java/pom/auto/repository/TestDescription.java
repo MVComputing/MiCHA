@@ -23,4 +23,10 @@ public class TestDescription {
     public static final String DESC_MICHA_FLUJO_7 = "MICHA Flujo 7";
     public static final String DESC_MICHA_HU_07 = "MICHA - Flujo 7";
     public static final String DESC_MICHA_TEST_NAME_F7 = "MICHA - Flujo 7";
+    public static final String DESC_MICHA_FLUJO_8 = "MICHA Flujo 8";
+    public static final String DESC_MICHA_HU_08 = "MICHA - Flujo 8";
+    public static final String DESC_MICHA_TEST_NAME_F8 = "MICHA - Flujo 8";
+    public static final String DESC_MICHA_FLUJO_9 = "MICHA Flujo 9";
+    public static final String DESC_MICHA_HU_09 = "MICHA - Flujo 9";
+    public static final String DESC_MICHA_TEST_NAME_F9 = "MICHA - Flujo 9";
 }

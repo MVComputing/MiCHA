@@ -40,6 +40,14 @@
       "flujo7": {
         "active": true,
         "name": "Flujo 07 - Accesos rápidos"
+      },
+      "flujo8": {
+        "active": true,
+        "name": "Flujo 08 - Descarga de certificado en Mi seguro social"
+      },
+      "flujo9": {
+        "active": true,
+        "name": "Flujo 09 - Revisar información de Mi seguro social"
       }
     }
   },

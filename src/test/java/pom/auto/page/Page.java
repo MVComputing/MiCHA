@@ -128,4 +128,25 @@ public class Page extends Base {
             screenShot();
         });
     }
+
+    public void flujo8(){
+        Allure.step(TestSteps.TS_MICHA_Flujo_8, (step) -> {
+            waitForElementToBeClickable(Elements.ELM_MICHA_MSS_LINK_MI_SEGURO_SOCIAL);
+            waitForVisibilityOfElementLocated(Elements.ELM_MICHA_MSS_BUTTON_DESCARGAR_CERTIFICADO);
+            screenShot();
+            downloadFiles(".pdf", Elements.ELM_MICHA_MSS_BUTTON_DESCARGAR_CERTIFICADO);
+            screenShot();
+        });
+    }
+
+    public void flujo9(){
+        Allure.step(TestSteps.TS_MICHA_Flujo_9, (step) -> {
+            waitForElementToBeClickable(Elements.ELM_MICHA_MSS_LINK_MI_SEGURO_SOCIAL);
+            waitForElementToBeClickable(Elements.ELM_MICHA_MSS_BUTTON_REVISAR_INFORMACION);
+            waitForElementToBeClickable(Elements.ELM_MICHA_MSS_LINK_CONTINUAR);
+            switchToNewTab(this.driver);
+            waitForVisibilityOfElementLocated(Elements.ELM_MICHA_MSS_VALIDATION_SEGURO_SOCIAL);
+            screenShot();
+        });
+    }
 }

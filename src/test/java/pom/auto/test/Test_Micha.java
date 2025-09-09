@@ -296,6 +296,57 @@ public class Test_Micha {
         page.flujo7();
     }
 
+    @Test
+    @Story(TestDescription.DESC_MICHA_HU_08)
+    @Description(TestDescription.DESC_MICHA_FLUJO_8)
+    @Severity(SeverityLevel.NORMAL)
+    @Owner(Data.DATA_OWNER_MV)
+    @Link(name = "Sitio web de pruebas QA", url = "https://mi3.qa.chileatiende.cl/micha/inicio")
+    public void flujo8() throws IOException {
+        Log.info(LogInfo.LOG_SEPARATE);
+        Log.info(LogInfo.LOG_TEST_START + TestDescription.DESC_MICHA_TEST_NAME_F8);
+        Base.date = page.getDate(Data.DATA_FECHA_DDMMYYYY);
+        testName.set(TestDescription.DESC_MICHA_TEST_NAME_F8);
+
+        ThreadContext.put("testName", testName.get());
+
+        if (!page.getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_HEADLESS,
+                ExternalData.ED_SOURCE)) {
+            page.maximizeScreen();
+        }
+
+        page.visitUrl(page.getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
+                ExternalData.ED_URL_TEST,
+                ExternalData.ED_SOURCE));
+        page.iniciarSesion();
+        page.flujo8();
+    }
+
+    @Test
+    @Story(TestDescription.DESC_MICHA_HU_09)
+    @Description(TestDescription.DESC_MICHA_FLUJO_9)
+    @Severity(SeverityLevel.NORMAL)
+    @Owner(Data.DATA_OWNER_MV)
+    @Link(name = "Sitio web de pruebas QA", url = "https://mi3.qa.chileatiende.cl/micha/inicio")
+    public void flujo9() throws IOException {
+        Log.info(LogInfo.LOG_SEPARATE);
+        Log.info(LogInfo.LOG_TEST_START + TestDescription.DESC_MICHA_TEST_NAME_F9);
+        Base.date = page.getDate(Data.DATA_FECHA_DDMMYYYY);
+        testName.set(TestDescription.DESC_MICHA_TEST_NAME_F9);
+
+        ThreadContext.put("testName", testName.get());
+
+        if (!page.getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_HEADLESS,
+                ExternalData.ED_SOURCE)) {
+            page.maximizeScreen();
+        }
+
+        page.visitUrl(page.getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
+                ExternalData.ED_URL_TEST,
+                ExternalData.ED_SOURCE));
+        page.iniciarSesion();
+        page.flujo9();
+    }
 
     /**
      * Finaliza la sesión del WebDriver después de que se ejecuten las pruebas.
