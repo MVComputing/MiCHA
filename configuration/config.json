@@ -34,7 +34,7 @@
         "name": "Flujo 05 - Bonos y beneficios del estado"
       },
       "flujo6": {
-        "active": false,
+        "active": true,
         "name": "Flujo 06 - Ingreso sitio web SENCE"
       },
       "flujo7": {

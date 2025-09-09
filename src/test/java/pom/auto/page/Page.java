@@ -89,6 +89,17 @@ public class Page extends Base {
         });
     }
 
+    public void flujo6(){
+        Allure.step(TestSteps.TS_MICHA_Flujo_6, (step) -> {
+            waitForElementToBeClickable(Elements.ELM_MICHA_MC_LINK_MIS_CAPACITACIONES);
+            waitForElementToBeClickable(Elements.ELM_MICHA_MC_BUTTON_SENCE);
+            waitForElementToBeClickable(Elements.ELM_MICHA_MC_BUTTON_CONTINUAR);
+            switchToNewTab(this.driver);
+            waitForVisibilityOfElementLocated(Elements.ELM_MICHA_MC_LINK_VALIDATION_SENCE);
+            screenShot();
+        });
+    }
+
     public void flujo7(){
         Allure.step(TestSteps.TS_MICHA_Flujo_7, (step) -> {
             waitForElementToBeClickable(Elements.ELM_MICHA_AR_LINK_PAGINA_INICIO);

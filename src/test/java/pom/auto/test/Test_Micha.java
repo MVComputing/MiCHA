@@ -267,7 +267,7 @@ public class Test_Micha {
                 ExternalData.ED_URL_TEST,
                 ExternalData.ED_SOURCE));
         page.iniciarSesion();
-        page.flujo7();
+        page.flujo6();
     }
 
     @Test

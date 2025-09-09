@@ -62,5 +62,12 @@ public class Elements {
             By.xpath("//a[@href='/micha/sence' and .//h4[text()='Mis capacitaciones']]");
     public static final By ELM_MICHA_AR_LINK_MI_SEGURO_SOCIAL =
             By.xpath("//a[@href='/micha/mi-seguro-previsional' and .//h4[text()='Mi Seguro Social']]");
+    public static final By ELM_MICHA_MC_LINK_MIS_CAPACITACIONES =
+            By.xpath("//a[text()='Mis capacitaciones']");
+    public static final By ELM_MICHA_MC_BUTTON_SENCE =
+            By.xpath("//button[text()=' Ir al sitio web de SENCE ']");
+    public static final By ELM_MICHA_MC_BUTTON_CONTINUAR = By.xpath("//button[text()=' Continuar ']");
+    public static final By ELM_MICHA_MC_LINK_VALIDATION_SENCE =
+            By.xpath("//a[text()='Sobre Sence']");
 
 }

@@ -6,6 +6,7 @@ public class TestSteps {
     public static final String TS_MICHA_Flujo_2 = "Registro social de hogares";
     public static final String TS_MICHA_Flujo_4 = "Conoce tu deuda";
     public static final String TS_MICHA_Flujo_5 = "Beneficios del estado";
+    public static final String TS_MICHA_Flujo_6 = "Mis capacitaciones";
     public static final String TS_MICHA_Flujo_7 = "Accesos rápidos";
 
 }
