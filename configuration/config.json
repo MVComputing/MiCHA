@@ -6,7 +6,7 @@
     "evidences": "./src/test/resources/evidencias/",
     "parallel": "tests",
     "threadCount": 20,
-    "urlTest": "https://mi3.qa.chileatiende.cl/micha/inicio",
+    "urlTest": "https://mi3.dev.chileatiende.cl/micha/inicio",
     "browserSize": "--window-size=1920,1080"
   },
   "tests": {
@@ -18,7 +18,7 @@
         "name": "Flujo 01 - Ingreso en mi perfil y edición de datos de contacto"
       },
       "flujo2": {
-        "active": true,
+        "active": false,
         "name": "Flujo 02 - Ingreso a Mi registro social de hogares"
       },
       "flujo3": {
@@ -26,27 +26,27 @@
         "name": "Flujo 03 - Descarga de PDF Informe de deudas"
       },
       "flujo4": {
-        "active": true,
+        "active": false,
         "name": "Flujo 04 - Ingreso a Comisión para el mercado financiero"
       },
       "flujo5": {
-        "active": true,
+        "active": false,
         "name": "Flujo 05 - Bonos y beneficios del estado"
       },
       "flujo6": {
-        "active": true,
+        "active": false,
         "name": "Flujo 06 - Ingreso sitio web SENCE"
       },
       "flujo7": {
-        "active": true,
+        "active": false,
         "name": "Flujo 07 - Accesos rápidos"
       },
       "flujo8": {
-        "active": true,
+        "active": false,
         "name": "Flujo 08 - Descarga de certificado en Mi seguro social"
       },
       "flujo9": {
-        "active": true,
+        "active": false,
         "name": "Flujo 09 - Revisar información de Mi seguro social"
       }
     }
@@ -65,5 +65,8 @@
     "comuna": "SANTIAGO",
     "fono": "987654321",
     "email": "test@gmail.com"
+  },
+  "impersonalizacion": {
+    "rut": "258224612"
   }
 }

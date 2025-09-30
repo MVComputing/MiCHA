@@ -9,6 +9,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import pom.Base;
 import pom.auto.page.Page;
+import pom.auto.repository.ExternalData_MICHA;
 import pom.auto.repository.TestDescription;
 import pom.general_repository.BrowserConfiguration;
 import pom.general_repository.Data;
@@ -85,6 +86,17 @@ public class Test_Micha {
                 break;
             default:
         }
+
+        if (!page.getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_HEADLESS,
+                ExternalData.ED_SOURCE)) {
+            page.maximizeScreen();
+        }
+
+        page.visitUrl(page.getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
+                ExternalData.ED_URL_TEST,
+                ExternalData.ED_SOURCE));
+
+        page.iniciarSesion();
     }
 
     /**
@@ -128,16 +140,9 @@ public class Test_Micha {
         testName.set(TestDescription.DESC_MICHA_TEST_NAME_F1);
 
         ThreadContext.put("testName", testName.get());
-
-        if (!page.getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_HEADLESS,
-                ExternalData.ED_SOURCE)) {
-            page.maximizeScreen();
-        }
-
-        page.visitUrl(page.getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
-                ExternalData.ED_URL_TEST,
-                ExternalData.ED_SOURCE));
-        page.iniciarSesion();
+        
+        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo1();
     }
 
@@ -155,15 +160,8 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        if (!page.getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_HEADLESS,
-                ExternalData.ED_SOURCE)) {
-            page.maximizeScreen();
-        }
-
-        page.visitUrl(page.getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
-                ExternalData.ED_URL_TEST,
-                ExternalData.ED_SOURCE));
-        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo2();
     }
 
@@ -181,15 +179,9 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        if (!page.getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_HEADLESS,
-                ExternalData.ED_SOURCE)) {
-            page.maximizeScreen();
-        }
-
-        page.visitUrl(page.getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
-                ExternalData.ED_URL_TEST,
-                ExternalData.ED_SOURCE));
-        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
+        
     }
 
     @Test
@@ -206,15 +198,8 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        if (!page.getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_HEADLESS,
-                ExternalData.ED_SOURCE)) {
-            page.maximizeScreen();
-        }
-
-        page.visitUrl(page.getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
-                ExternalData.ED_URL_TEST,
-                ExternalData.ED_SOURCE));
-        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo4();
     }
 
@@ -232,15 +217,8 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        if (!page.getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_HEADLESS,
-                ExternalData.ED_SOURCE)) {
-            page.maximizeScreen();
-        }
-
-        page.visitUrl(page.getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
-                ExternalData.ED_URL_TEST,
-                ExternalData.ED_SOURCE));
-        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo5();
     }
 
@@ -258,15 +236,8 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        if (!page.getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_HEADLESS,
-                ExternalData.ED_SOURCE)) {
-            page.maximizeScreen();
-        }
-
-        page.visitUrl(page.getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
-                ExternalData.ED_URL_TEST,
-                ExternalData.ED_SOURCE));
-        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo6();
     }
 
@@ -284,15 +255,8 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        if (!page.getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_HEADLESS,
-                ExternalData.ED_SOURCE)) {
-            page.maximizeScreen();
-        }
-
-        page.visitUrl(page.getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
-                ExternalData.ED_URL_TEST,
-                ExternalData.ED_SOURCE));
-        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo7();
     }
 
@@ -310,15 +274,8 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        if (!page.getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_HEADLESS,
-                ExternalData.ED_SOURCE)) {
-            page.maximizeScreen();
-        }
-
-        page.visitUrl(page.getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
-                ExternalData.ED_URL_TEST,
-                ExternalData.ED_SOURCE));
-        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo8();
     }
 
@@ -336,15 +293,8 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        if (!page.getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_HEADLESS,
-                ExternalData.ED_SOURCE)) {
-            page.maximizeScreen();
-        }
-
-        page.visitUrl(page.getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
-                ExternalData.ED_URL_TEST,
-                ExternalData.ED_SOURCE));
-        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo9();
     }
 

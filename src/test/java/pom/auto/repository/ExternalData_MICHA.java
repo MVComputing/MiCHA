@@ -1,6 +1,6 @@
 package pom.auto.repository;
 
-public class ExternalData {
+public class ExternalData_MICHA {
 
     public static final String ED_MICHA_SRC = "./configuration/config.json";
 
@@ -14,4 +14,7 @@ public class ExternalData {
     public static final String ED_MICHA_CONTACTO_COMUNA = "comuna";
     public static final String ED_MICHA_CONTACTO_FONO = "fono";
     public static final String ED_MICHA_CONTACTO_EMAIL = "email";
+
+    public static final String ED_MICHA_OBJECT_IMPERSONALIZACION = "impersonalizacion";
+    public static final String ED_MICHA_IMPERSONALIZACION_RUT = "rut";
 }

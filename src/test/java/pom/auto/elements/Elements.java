@@ -17,8 +17,8 @@ public class Elements {
     public static final By ELM_MICHA_LINK_MI_PERFIL_EDITAR =
             By.xpath("//a//span[text()='Editar']");
     public static final By ELM_MICHA_TEXTBOX_MI_PERFIL_DIRECCION = By.id("address");
-    public static final By ELM_MICHA_COMBOBOX_MI_PERFIL_REGION = By.id("select-0000000009");
-    public static final By ELM_MICHA_COMBOBOX_MI_PERFIL_COMUNA = By.id("select-0000000010");
+    public static final By ELM_MICHA_COMBOBOX_MI_PERFIL_REGION = By.id("select-0000000021");
+    public static final By ELM_MICHA_COMBOBOX_MI_PERFIL_COMUNA = By.id("select-0000000022");
     public static final By ELM_MICHA_TEXTBOX_MI_PERFIL_FONO = By.id("fono");
     public static final By ELM_MICHA_TEXTBOX_MI_PERFIL_EMAIL = By.id("email");
     public static final By ELM_MICHA_BUTTON_MI_PERFIL_GUARDAR = By.xpath("//button[text()=' Guardar']");
@@ -77,5 +77,10 @@ public class Elements {
             By.xpath("//button[text()=' Revisar información ']");
     public static final By ELM_MICHA_MSS_LINK_CONTINUAR = By.xpath("//a[text()='Continuar']");
     public static final By ELM_MICHA_MSS_VALIDATION_SEGURO_SOCIAL = By.xpath("//h1[text()='Seguro Social']");
+    public static final By ELM_MICHA_CONTACTO_REGION = By.xpath("(//select[contains(@class, 'icon-select-cust')])[1]");
+    public static final By ELM_MICHA_CONTACTO_REGION_OPCION = By.xpath("//option[text()='METROPOLITANA']");
+    public static final By ELM_MICHA_CONTACTO_COMUNA = By.xpath("(//select[contains(@class, 'icon-select-cust')])[2]");
+    public static final By ELM_MICHA_CONTACTO_COMUNA_OPCION = By.xpath("//option[text()='SANTIAGO']");
+    public static final By ELM_MICHA_TEXTBOX_IMPERSONALIZADOR = By.xpath("(//input[contains(@class, 'w-full')])");
 
 }

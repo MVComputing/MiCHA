@@ -4,7 +4,7 @@ import io.qameta.allure.Allure;
 import org.openqa.selenium.WebDriver;
 import pom.Base;
 import pom.auto.elements.Elements;
-import pom.auto.repository.ExternalData;
+import pom.auto.repository.ExternalData_MICHA;
 import pom.auto.repository.TestSteps;
 
 public class Page extends Base {
@@ -12,44 +12,51 @@ public class Page extends Base {
         super(driver);
     }
 
-    public void iniciarSesion(){
+    public void iniciarSesion() {
         Allure.step(TestSteps.TS_MICHA_LOGIN, (step) -> {
             waitForElementToBeClickable(Elements.ELM_MICHA_BUTTON_INICIAR_SESION);
-            sendInputText(getJsonString(ExternalData.ED_MICHA_OBJECT_CREDENCIALES,
-                    ExternalData.ED_MICHA_CREDENCIALES_USER_RUN, ExternalData.ED_MICHA_SRC),
+            sendInputText(getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_CREDENCIALES,
+                            ExternalData_MICHA.ED_MICHA_CREDENCIALES_USER_RUN, ExternalData_MICHA.ED_MICHA_SRC),
                     Elements.ELM_MICHA_TEXTBOX_RUN);
-            sendInputText(getJsonString(ExternalData.ED_MICHA_OBJECT_CREDENCIALES,
-                    ExternalData.ED_MICHA_CREDENCIALES_USER_PASS, ExternalData.ED_MICHA_SRC),
+            sendInputText(getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_CREDENCIALES,
+                            ExternalData_MICHA.ED_MICHA_CREDENCIALES_USER_PASS, ExternalData_MICHA.ED_MICHA_SRC),
                     Elements.ELM_MICHA_TEXTBOX_PASS);
             screenShot();
             waitForElementToBeClickable(Elements.ELM_MICHA_BUTTON_INGRESA);
+
+        });
+    }
+
+    public void impersonalizador(String rut) {
+        Allure.step(TestSteps.TS_MICHA_IMPERSONALIZADOR, (step) -> {
+            sendInputText(rut, Elements.ELM_MICHA_TEXTBOX_IMPERSONALIZADOR);
+            screenShot();
             waitForElementToBeClickable(Elements.ELM_MICHA_BUTTON_CONTINUAR);
         });
     }
 
-    public void flujo1(){
+    public void flujo1() {
         Allure.step(TestSteps.TS_MICHA_Flujo_1, (step) -> {
             waitForElementToBeClickable(Elements.ELM_MICHA_BUTTON_MI_PERFIL);
             waitForVisibilityOfElementLocated(Elements.ELM_MICHA_LBL_MI_PERFIL_MENSAJE_BIENVENIDA);
             waitForElementToBeClickable(Elements.ELM_MICHA_LINK_MI_PERFIL_EDITAR);
             waitForVisibilityOfElementLocated(Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_DIRECCION);
             clearText(Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_DIRECCION);
-            sendInputText(getJsonString(ExternalData.ED_MICHA_OBJECT_CONTACTO,
-                            ExternalData.ED_MICHA_CONTACTO_DIRECCION, ExternalData.ED_MICHA_SRC),
+            sendInputText(getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_CONTACTO,
+                            ExternalData_MICHA.ED_MICHA_CONTACTO_DIRECCION, ExternalData_MICHA.ED_MICHA_SRC),
                     Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_DIRECCION);
-            selectElementSelectByVisibleText(Elements.ELM_MICHA_COMBOBOX_MI_PERFIL_REGION,
-                    getJsonString(ExternalData.ED_MICHA_OBJECT_CONTACTO,
-                            ExternalData.ED_MICHA_CONTACTO_REGION, ExternalData.ED_MICHA_SRC));
-            selectElementSelectByVisibleText(Elements.ELM_MICHA_COMBOBOX_MI_PERFIL_COMUNA,
-                    getJsonString(ExternalData.ED_MICHA_OBJECT_CONTACTO,
-                            ExternalData.ED_MICHA_CONTACTO_COMUNA, ExternalData.ED_MICHA_SRC));
+
+            waitForElementToBeClickable(Elements.ELM_MICHA_CONTACTO_REGION);
+            waitForElementToBeClickable(Elements.ELM_MICHA_CONTACTO_REGION_OPCION);
+            waitForElementToBeClickable(Elements.ELM_MICHA_CONTACTO_COMUNA);
+            waitForElementToBeClickable(Elements.ELM_MICHA_CONTACTO_COMUNA_OPCION);
             clearText(Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_FONO);
-            sendInputText(getJsonString(ExternalData.ED_MICHA_OBJECT_CONTACTO,
-                            ExternalData.ED_MICHA_CONTACTO_FONO, ExternalData.ED_MICHA_SRC),
+            sendInputText(getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_CONTACTO,
+                            ExternalData_MICHA.ED_MICHA_CONTACTO_FONO, ExternalData_MICHA.ED_MICHA_SRC),
                     Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_FONO);
             clearText(Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_EMAIL);
-            sendInputText(getJsonString(ExternalData.ED_MICHA_OBJECT_CONTACTO,
-                            ExternalData.ED_MICHA_CONTACTO_EMAIL, ExternalData.ED_MICHA_SRC),
+            sendInputText(getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_CONTACTO,
+                            ExternalData_MICHA.ED_MICHA_CONTACTO_EMAIL, ExternalData_MICHA.ED_MICHA_SRC),
                     Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_EMAIL);
             waitForElementToBeClickable(Elements.ELM_MICHA_BUTTON_MI_PERFIL_GUARDAR);
             waitForVisibilityOfElementLocated(Elements.ELM_MICHA_LBL_MI_PERFIL_MENSAJE_CAMBIOS_GUARDADOS);
@@ -57,7 +64,7 @@ public class Page extends Base {
         });
     }
 
-    public void flujo2(){
+    public void flujo2() {
         Allure.step(TestSteps.TS_MICHA_Flujo_2, (step) -> {
             waitForElementToBeClickable(Elements.ELM_MICHA_RSH_LINK_REGISTRO_SOCIAL);
             waitForElementToBeClickable(Elements.ELM_MICHA_BUTTON_RSH_REGISTRO_SOCIAL);
@@ -68,7 +75,7 @@ public class Page extends Base {
         });
     }
 
-    public void flujo4(){
+    public void flujo4() {
         Allure.step(TestSteps.TS_MICHA_Flujo_4, (step) -> {
             waitForElementToBeClickable(Elements.ELM_MICHA_DF_LINK_DEUDAS_FINANCIERAS);
             waitForElementToBeClickable(Elements.ELM_MICHA_DF_BUTTON_CONOCER_DEUDA);
@@ -79,7 +86,7 @@ public class Page extends Base {
         });
     }
 
-    public void flujo5(){
+    public void flujo5() {
         Allure.step(TestSteps.TS_MICHA_Flujo_5, (step) -> {
             waitForElementToBeClickable(Elements.ELM_MICHA_BS_LINK_BENEFICIOS_SOCIALES);
             waitForElementToBeClickable(Elements.ELM_MICHA_BS_LINK_BENEFICIOS_SOCIALES_INFORMATE);
@@ -89,7 +96,7 @@ public class Page extends Base {
         });
     }
 
-    public void flujo6(){
+    public void flujo6() {
         Allure.step(TestSteps.TS_MICHA_Flujo_6, (step) -> {
             waitForElementToBeClickable(Elements.ELM_MICHA_MC_LINK_MIS_CAPACITACIONES);
             waitForElementToBeClickable(Elements.ELM_MICHA_MC_BUTTON_SENCE);
@@ -100,7 +107,7 @@ public class Page extends Base {
         });
     }
 
-    public void flujo7(){
+    public void flujo7() {
         Allure.step(TestSteps.TS_MICHA_Flujo_7, (step) -> {
             waitForElementToBeClickable(Elements.ELM_MICHA_AR_LINK_PAGINA_INICIO);
             waitForElementToBeClickable(Elements.ELM_MICHA_AR_LINK_MI_PERFIL);
@@ -129,7 +136,7 @@ public class Page extends Base {
         });
     }
 
-    public void flujo8(){
+    public void flujo8() {
         Allure.step(TestSteps.TS_MICHA_Flujo_8, (step) -> {
             waitForElementToBeClickable(Elements.ELM_MICHA_MSS_LINK_MI_SEGURO_SOCIAL);
             waitForVisibilityOfElementLocated(Elements.ELM_MICHA_MSS_BUTTON_DESCARGAR_CERTIFICADO);
@@ -139,7 +146,7 @@ public class Page extends Base {
         });
     }
 
-    public void flujo9(){
+    public void flujo9() {
         Allure.step(TestSteps.TS_MICHA_Flujo_9, (step) -> {
             waitForElementToBeClickable(Elements.ELM_MICHA_MSS_LINK_MI_SEGURO_SOCIAL);
             waitForElementToBeClickable(Elements.ELM_MICHA_MSS_BUTTON_REVISAR_INFORMACION);
