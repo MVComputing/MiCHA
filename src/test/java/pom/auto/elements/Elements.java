@@ -76,11 +76,16 @@ public class Elements {
     public static final By ELM_MICHA_MSS_BUTTON_REVISAR_INFORMACION =
             By.xpath("//button[text()=' Revisar información ']");
     public static final By ELM_MICHA_MSS_LINK_CONTINUAR = By.xpath("//a[text()='Continuar']");
-    public static final By ELM_MICHA_MSS_VALIDATION_SEGURO_SOCIAL = By.xpath("//h1[text()='Seguro Social']");
-    public static final By ELM_MICHA_CONTACTO_REGION = By.xpath("(//select[contains(@class, 'icon-select-cust')])[1]");
-    public static final By ELM_MICHA_CONTACTO_REGION_OPCION = By.xpath("//option[text()='METROPOLITANA']");
-    public static final By ELM_MICHA_CONTACTO_COMUNA = By.xpath("(//select[contains(@class, 'icon-select-cust')])[2]");
+    public static final By ELM_MICHA_MSS_VALIDATION_SEGURO_SOCIAL =
+            By.xpath("//h1[text()='Seguro Social']");
+    public static final By ELM_MICHA_CONTACTO_REGION =
+            By.xpath("(//select[contains(@class, 'icon-select-cust')])[1]");
+    public static final By ELM_MICHA_CONTACTO_REGION_OPCION =
+            By.xpath("//option[text()='METROPOLITANA']");
+    public static final By ELM_MICHA_CONTACTO_COMUNA =
+            By.xpath("(//select[contains(@class, 'icon-select-cust')])[2]");
     public static final By ELM_MICHA_CONTACTO_COMUNA_OPCION = By.xpath("//option[text()='SANTIAGO']");
-    public static final By ELM_MICHA_TEXTBOX_IMPERSONALIZADOR = By.xpath("(//input[contains(@class, 'w-full')])");
+    public static final By ELM_MICHA_TEXTBOX_IMPERSONALIZADOR =
+            By.xpath("//input[contains(@class, 'w-full') and @type='text']");
 
 }

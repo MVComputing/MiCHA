@@ -29,6 +29,8 @@ public class Page extends Base {
 
     public void impersonalizador(String rut) {
         Allure.step(TestSteps.TS_MICHA_IMPERSONALIZADOR, (step) -> {
+            waitForElementToBeClickable(Elements.ELM_MICHA_TEXTBOX_IMPERSONALIZADOR);
+            clearText(Elements.ELM_MICHA_TEXTBOX_IMPERSONALIZADOR);
             sendInputText(rut, Elements.ELM_MICHA_TEXTBOX_IMPERSONALIZADOR);
             screenShot();
             waitForElementToBeClickable(Elements.ELM_MICHA_BUTTON_CONTINUAR);

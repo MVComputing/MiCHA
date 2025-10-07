@@ -15,39 +15,51 @@
       "suiteName": "Micha",
       "flujo1": {
         "active": true,
-        "name": "Flujo 01 - Ingreso en mi perfil y edición de datos de contacto"
+        "name": "Flujo 01 - Mi perfil - Edición de datos de contacto"
       },
       "flujo2": {
-        "active": false,
-        "name": "Flujo 02 - Ingreso a Mi registro social de hogares"
+        "active": true,
+        "name": "Flujo 02 - Mi registro social de hogares - Obtener cartola"
       },
       "flujo3": {
-        "active": false,
-        "name": "Flujo 03 - Descarga de PDF Informe de deudas"
+        "active": true,
+        "name": "Flujo 03 - Mis deudas financieras - Descarga de PDF Informe de deudas"
       },
       "flujo4": {
-        "active": false,
-        "name": "Flujo 04 - Ingreso a Comisión para el mercado financiero"
+        "active": true,
+        "name": "Flujo 04 - Mis deudas financieras - Ir a conocer tu deuda"
       },
       "flujo5": {
-        "active": false,
-        "name": "Flujo 05 - Bonos y beneficios del estado"
+        "active": true,
+        "name": "Flujo 05 - Mis pagos de beneficios sociales - Infórmate sobre los beneficios del estado"
       },
       "flujo6": {
-        "active": false,
-        "name": "Flujo 06 - Ingreso sitio web SENCE"
+        "active": true,
+        "name": "Flujo 06 - Mis capacitaciones - Ingreso sitio web SENCE"
       },
       "flujo7": {
-        "active": false,
-        "name": "Flujo 07 - Accesos rápidos"
+        "active": true,
+        "name": "Flujo 07 - Mi perfil - Accesos rápidos"
       },
       "flujo8": {
-        "active": false,
-        "name": "Flujo 08 - Descarga de certificado en Mi seguro social"
+        "active": true,
+        "name": "Flujo 08 - Mi seguro social - Descarga de certificado en Mi seguro social"
       },
       "flujo9": {
+        "active": true,
+        "name": "Flujo 09 - Mi seguro social - Revisar información"
+      },
+      "flujo10": {
         "active": false,
-        "name": "Flujo 09 - Revisar información de Mi seguro social"
+        "name": "Flujo 10 - Mis capacitaciones - Solicitar certificado"
+      },
+      "flujo11": {
+        "active": false,
+        "name": "Flujo 11 - Mis capacitaciones - Revisar cursos en SENCE"
+      },
+      "flujo12": {
+        "active": false,
+        "name": "Flujo 12 - Mi registro social de hogares - Ingresar al RSH"
       }
     }
   },
