@@ -87,5 +87,9 @@ public class Elements {
     public static final By ELM_MICHA_CONTACTO_COMUNA_OPCION = By.xpath("//option[text()='SANTIAGO']");
     public static final By ELM_MICHA_TEXTBOX_IMPERSONALIZADOR =
             By.xpath("//input[contains(@class, 'w-full') and @type='text']");
+    public static final By ELM_MICHA_MC_BUTTON_REVISAR_CURSOS_SENCE =
+            By.xpath("//button[text()=' Revisar cursos en SENCE ']");
+    public static final By ELM_MICHA_BUTTON_RSH_OBTENER_CARTOLA_2 =
+            By.xpath("(//button[text()=' Obtener cartola '])[2]");
 
 }

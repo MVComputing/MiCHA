@@ -11,5 +11,6 @@ public class TestSteps {
     public static final String TS_MICHA_Flujo_7 = "Accesos rápidos";
     public static final String TS_MICHA_Flujo_8 = "Descarga de certificacio en Mi seguro social";
     public static final String TS_MICHA_Flujo_9 = "Revisión de información de Mi seguro social";
+    public static final String TS_MICHA_Flujo_10 = "Revisión de cursos SENSE";
 
 }

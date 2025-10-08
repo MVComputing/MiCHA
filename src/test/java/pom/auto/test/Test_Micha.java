@@ -142,7 +142,7 @@ public class Test_Micha {
         ThreadContext.put("testName", testName.get());
         
         page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F1, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo1();
     }
 
@@ -161,7 +161,7 @@ public class Test_Micha {
         ThreadContext.put("testName", testName.get());
 
         page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F2, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo2();
     }
 
@@ -180,7 +180,7 @@ public class Test_Micha {
         ThreadContext.put("testName", testName.get());
 
         page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F3, ExternalData_MICHA.ED_MICHA_SRC));
         
     }
 
@@ -199,7 +199,7 @@ public class Test_Micha {
         ThreadContext.put("testName", testName.get());
 
         page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F4, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo4();
     }
 
@@ -218,7 +218,7 @@ public class Test_Micha {
         ThreadContext.put("testName", testName.get());
 
         page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F5, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo5();
     }
 
@@ -237,7 +237,7 @@ public class Test_Micha {
         ThreadContext.put("testName", testName.get());
 
         page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F6, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo6();
     }
 
@@ -256,7 +256,7 @@ public class Test_Micha {
         ThreadContext.put("testName", testName.get());
 
         page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F7, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo7();
     }
 
@@ -275,7 +275,7 @@ public class Test_Micha {
         ThreadContext.put("testName", testName.get());
 
         page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F8, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo8();
     }
 
@@ -294,8 +294,46 @@ public class Test_Micha {
         ThreadContext.put("testName", testName.get());
 
         page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT, ExternalData_MICHA.ED_MICHA_SRC));
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F9, ExternalData_MICHA.ED_MICHA_SRC));
         page.flujo9();
+    }
+
+    @Test
+    @Story(TestDescription.DESC_MICHA_HU_10)
+    @Description(TestDescription.DESC_MICHA_FLUJO_10)
+    @Severity(SeverityLevel.NORMAL)
+    @Owner(Data.DATA_OWNER_MV)
+    @Link(name = "Sitio web de pruebas QA", url = "https://mi3.qa.chileatiende.cl/micha/inicio")
+    public void flujo10() throws IOException {
+        Log.info(LogInfo.LOG_SEPARATE);
+        Log.info(LogInfo.LOG_TEST_START + TestDescription.DESC_MICHA_TEST_NAME_F10);
+        Base.date = page.getDate(Data.DATA_FECHA_DDMMYYYY);
+        testName.set(TestDescription.DESC_MICHA_TEST_NAME_F10);
+
+        ThreadContext.put("testName", testName.get());
+
+        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F10, ExternalData_MICHA.ED_MICHA_SRC));
+        page.flujo10();
+    }
+
+    @Test
+    @Story(TestDescription.DESC_MICHA_HU_12)
+    @Description(TestDescription.DESC_MICHA_FLUJO_12)
+    @Severity(SeverityLevel.NORMAL)
+    @Owner(Data.DATA_OWNER_MV)
+    @Link(name = "Sitio web de pruebas QA", url = "https://mi3.qa.chileatiende.cl/micha/inicio")
+    public void flujo12() throws IOException {
+        Log.info(LogInfo.LOG_SEPARATE);
+        Log.info(LogInfo.LOG_TEST_START + TestDescription.DESC_MICHA_TEST_NAME_F12);
+        Base.date = page.getDate(Data.DATA_FECHA_DDMMYYYY);
+        testName.set(TestDescription.DESC_MICHA_TEST_NAME_F12);
+
+        ThreadContext.put("testName", testName.get());
+
+        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F12, ExternalData_MICHA.ED_MICHA_SRC));
+        page.flujo12();
     }
 
     /**

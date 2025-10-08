@@ -22,7 +22,7 @@
         "name": "Flujo 02 - Mi registro social de hogares - Obtener cartola"
       },
       "flujo3": {
-        "active": true,
+        "active": false,
         "name": "Flujo 03 - Mis deudas financieras - Descarga de PDF Informe de deudas"
       },
       "flujo4": {
@@ -50,15 +50,15 @@
         "name": "Flujo 09 - Mi seguro social - Revisar información"
       },
       "flujo10": {
-        "active": false,
-        "name": "Flujo 10 - Mis capacitaciones - Solicitar certificado"
+        "active": true,
+        "name": "Flujo 10 - Mis capacitaciones - Revisar cursos en SENCE"
       },
       "flujo11": {
         "active": false,
-        "name": "Flujo 11 - Mis capacitaciones - Revisar cursos en SENCE"
+        "name": "Flujo 11 - Mis capacitaciones - Solicitar certificado"
       },
       "flujo12": {
-        "active": false,
+        "active": true,
         "name": "Flujo 12 - Mi registro social de hogares - Ingresar al RSH"
       }
     }
@@ -79,6 +79,17 @@
     "email": "test@gmail.com"
   },
   "impersonalizacion": {
-    "rut": "258224612"
+    "rutF1": "444444444",
+    "rutF2": "444444444",
+    "rutF3": "258224612",
+    "rutF4": "258224612",
+    "rutF5": "258224612",
+    "rutF6": "444444444",
+    "rutF7": "258224612",
+    "rutF8": "258224612",
+    "rutF9": "258224612",
+    "rutF10": "258224612",
+    "rutF11": "258224612",
+    "rutF12": "258224612"
   }
 }

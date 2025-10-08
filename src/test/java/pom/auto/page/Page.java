@@ -158,4 +158,26 @@ public class Page extends Base {
             screenShot();
         });
     }
+
+    public void flujo10() {
+        Allure.step(TestSteps.TS_MICHA_Flujo_10, (step) -> {
+            waitForElementToBeClickable(Elements.ELM_MICHA_MC_LINK_MIS_CAPACITACIONES);
+            waitForElementToBeClickable(Elements.ELM_MICHA_MC_BUTTON_REVISAR_CURSOS_SENCE);
+            waitForElementToBeClickable(Elements.ELM_MICHA_MC_BUTTON_CONTINUAR);
+            switchToNewTab(this.driver);
+            waitForVisibilityOfElementLocated(Elements.ELM_MICHA_MC_LINK_VALIDATION_SENCE);
+            screenShot();
+        });
+    }
+
+    public void flujo12() {
+        Allure.step(TestSteps.TS_MICHA_Flujo_2, (step) -> {
+            waitForElementToBeClickable(Elements.ELM_MICHA_RSH_LINK_REGISTRO_SOCIAL);
+            waitForElementToBeClickable(Elements.ELM_MICHA_BUTTON_RSH_OBTENER_CARTOLA);
+            waitForElementToBeClickable(Elements.ELM_MICHA_BUTTON_RSH_OBTENER_CARTOLA_2);
+            switchToNewTab(this.driver);
+            waitForVisibilityOfElementLocated(Elements.ELM_MICHA_LOGO_RSH);
+            screenShot();
+        });
+    }
 }
