@@ -9,7 +9,34 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Generador automático de archivos XML de TestNG a partir de un archivo de configuración JSON.
+ * <p>
+ * Esta clase lee la configuración de los tests, módulos activos, número de hilos,
+ * navegador a utilizar y rutas de directorios, para crear automáticamente:
+ * <ul>
+ *     <li>Archivos individuales de suite para cada módulo activo (testng-&lt;modulo&gt;.xml).</li>
+ *     <li>Archivo maestro suite-master.xml que referencia todos los módulos activos.</li>
+ * </ul>
+ * <p>
+ * También se encarga de eliminar los archivos de módulos que estén inactivos y asegura
+ * la creación de los directorios necesarios.
+ * <p>
+ * Cada suite incluye un listener {@link pom.retry.RetryListener} y parámetros
+ * para la ejecución de los tests según el navegador configurado.
+ */
 public class TestNGXmlGenerator {
+    /**
+     * Método principal que genera los archivos XML de TestNG según la configuración JSON.
+     * <p>
+     * - Lee el archivo de configuración JSON.<br>
+     * - Procesa cada módulo y sus flujos, generando archivos de suite individuales
+     *   para los activos.<br>
+     * - Construye y actualiza el archivo suite-master.xml con referencias a los módulos activos.<br>
+     * - Maneja la creación de directorios y eliminación de archivos antiguos si un módulo está inactivo.
+     *
+     * @param args argumentos de línea de comando (no utilizados).
+     */
     public static void main(String[] args) {
         try {
             // Ruta del JSON que contiene la configuración y módulos
@@ -25,6 +52,9 @@ public class TestNGXmlGenerator {
 
             // Número de hilos para paralelismo en TestNG
             int threadCount = configuracion.optInt("threadCount", 1);
+
+            //Navegador a utilizar
+            String browser = configuracion.optString("browser", "CHROME");
 
             // Rutas de directorios
             Path directorioSuites = Paths.get("src", "test", "resources", "suites");
@@ -63,6 +93,9 @@ public class TestNGXmlGenerator {
                 xml.append("<!DOCTYPE suite SYSTEM \"http://testng.org/testng-1.0.dtd\">\n");
                 xml.append("<suite name=\"").append(suiteName)
                         .append("\" parallel=\"tests\" thread-count=\"").append(threadCount).append("\">\n\n");
+                xml.append("    <listeners>\n");
+                xml.append("        <listener class-name=\"pom.retry.RetryListener\"/>\n");
+                xml.append("    </listeners>\n\n");
 
                 String testSuite = "pom.auto.test.Test_";
 
@@ -74,8 +107,7 @@ public class TestNGXmlGenerator {
                         String nombre = datosFlujo.optString("name", flujo);
 
                         xml.append("    <test name=\"").append(nombre).append("\">\n");
-                        xml.append("        <parameter name=\"BrowserType\" value=\"Chrome\"/>\n");
-                        xml.append("        <parameter name=\"TestType\" value=\"NormalTest\"></parameter>\n");
+                        xml.append("        <parameter name=\"BrowserType\" value=\"").append(browser).append("\"/>\n");
                         xml.append("        <classes>\n");
                         xml.append("            <class name=\"").append(testSuite)
                                 .append(capitalize(modulo)).append("\">\n");
@@ -118,7 +150,12 @@ public class TestNGXmlGenerator {
         }
     }
 
-    // Método para capitalizar la primera letra de una cadena
+    /**
+     * Capitaliza la primera letra de una cadena de texto.
+     *
+     * @param str cadena a capitalizar.
+     * @return cadena con la primera letra en mayúscula.
+     */
     private static String capitalize(String str) {
         if (str == null || str.isEmpty()) return str;
         return str.substring(0, 1).toUpperCase() + str.substring(1);

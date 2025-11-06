@@ -3,13 +3,12 @@ package pom.auto.test;
 import io.qameta.allure.*;
 import org.apache.logging.log4j.ThreadContext;
 import org.openqa.selenium.WebDriver;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.testng.ITestResult;
+import org.testng.annotations.*;
 import pom.Base;
 import pom.auto.page.Page;
-import pom.auto.repository.ExternalData_MICHA;
+import pom.auto.repository.ExternalData_Auto;
 import pom.auto.repository.TestDescription;
 import pom.general_repository.BrowserConfiguration;
 import pom.general_repository.Data;
@@ -21,112 +20,71 @@ import java.io.IOException;
 
 import static pom.Base.testName;
 
+/**
+ * Clase de prueba de Mi Chile Atienede que realiza la ejecución de un flujo automatizado
+ * utilizando Selenium WebDriver y el patrón Page Object.
+ * <p>
+ * Gestiona la configuración inicial del navegador, la ejecución del flujo de prueba
+ * y el cierre controlado del driver. Además, implementa soporte para múltiples
+ * navegadores y registro de resultados mediante Allure y Log.
+ */
 public class Test_Micha {
-
-    /**
-     * Objeto WebDriver utilizado para controlar el navegador en las pruebas automatizadas.
-     * <p>
-     * Este objeto se inicializa según el tipo de navegador configurado en el método de preparación.
-     * Permite interactuar con el navegador durante la ejecución de las pruebas.
-     * </p>
-     */
+    /** Instancia del controlador del navegador. */
     public WebDriver driver;
-
-    /**
-     * Objeto de la clase {@link Page} que representa las páginas del sistema CRM.
-     * <p>
-     * Esta variable se utiliza para realizar operaciones específicas en las páginas
-     * del sistema durante la ejecución de pruebas automatizadas. Se inicializa y configura
-     * según las necesidades del flujo de prueba.
-     * </p>
-     */
+    /** Instancia de la clase {@link Page} que contiene los flujos de interacción. */
     public Page page;
 
     /**
-     * Configura el entorno inicial para la ejecución de pruebas basado en el tipo de navegador proporcionado.
+     * Configura el entorno de prueba antes de la ejecución de cada método.
      * <p>
-     * Este método está marcado con {@link BeforeClass} y se ejecuta antes de que inicie cualquier clase de prueba.
-     * Utiliza el parámetro {@code BrowserType} para determinar el navegador a configurar. Según el navegador
-     * especificado, inicializa el WebDriver correspondiente y aplica configuraciones personalizadas.
-     * </p>
+     * - Cierra cualquier instancia previa del navegador.<br>
+     * - Inicializa el driver según el tipo de navegador especificado (Chrome, Edge, Firefox).<br>
+     * - Carga la configuración personalizada de cada navegador.<br>
+     * - Ejecuta el método {@link Page#setup()} para preparar el entorno inicial.
      *
-     * <p>Caso de uso de navegadores:</p>
-     * <ul>
-     *   <li><b>Chrome:</b> Configuración personalizada usando {@code chromeDriverConnectionOptions}.</li>
-     *   <li><b>Edge:</b> Configuración personalizada usando {@code edgeConnectionOptions}.</li>
-     *   <li><b>Firefox:</b> Configuración personalizada usando {@code firefoxDriverConnectionOptions}.</li>
-     * </ul>
-     *
-     * @param browserType Tipo de navegador que se va a configurar (por ejemplo, "Chrome", "Edge" o "Firefox").
-     * @throws IOException si ocurre un problema al aplicar configuraciones específicas del navegador.
+     * @param browserType tipo de navegador a utilizar (por ejemplo: "CHROME", "EDGE", "FIREFOX").
+     * @throws IOException si ocurre un error al leer la configuración externa.
      */
-    @BeforeClass
+    @BeforeMethod
     @Parameters({"BrowserType"})
     public void setUp(String browserType) throws IOException {
+        if (driver != null) {
+            try {
+                driver.quit();
+            } catch (Exception e) {
+                Log.info(e.getMessage());
+            } finally {
+                driver = null;
+            }
+        }
+
+        page = new Page(driver);
+
         switch (browserType) {
-            case "Chrome":
-                page = new Page(driver);
-                page.chromeDriverConnectionOptions(page.chromeCustomConfiguration(page.getJsonString(
-                        ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
-                        ExternalData.ED_DOWNLOADS,
-                        ExternalData.ED_SOURCE)));
+            case "CHROME":
+                ChromeOptions chromeOptions = page.chromeCustomConfiguration(
+                        page.getJsonString(
+                                ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
+                                ExternalData.ED_DOWNLOADS,
+                                ExternalData.ED_SOURCE));
+                page.chromeDriverConnectionOptions(chromeOptions);
                 break;
-            case "Edge":
-                page = new Page(driver);
-                page.edgeConnectionOptions(page.edgeCustomConfiguration());
+
+            case "EDGE":
                 break;
-            case "Firefox":
-                page = new Page(driver);
-                page.firefoxDriverConnectionOptions(page.firefoxCustomConfiguration(
-                        BrowserConfiguration.BC_PREF_DOWNLOAD_DIRECTORY_FOLDER_LIST_KEY_FIREFOX,
-                        BrowserConfiguration.BC_PREF_DOWNLOAD_DIRECTORY_FOLDER_LIST_VALUE_FIREFOX,
-                        BrowserConfiguration.BC_PREF_DOWNLOAD_DIRECTORY_FIREFOX, page.getJsonString(
-                                ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_DOWNLOADS,
-                                ExternalData.ED_SOURCE)));
+
+            case "FIREFOX":
                 break;
+
             default:
+                throw new IllegalArgumentException("Browser desconocido: " + browserType);
         }
 
-        if (!page.getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_HEADLESS,
-                ExternalData.ED_SOURCE)) {
-            page.maximizeScreen();
-        }
-
-        page.visitUrl(page.getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
-                ExternalData.ED_URL_TEST,
-                ExternalData.ED_SOURCE));
-
-        page.iniciarSesion();
+        page.setup();
+        driver = page.getDriver();
     }
 
-    /**
-     * Realiza el flujo de prueba para la consulta presencial de trámites en el sistema CRM.
-     * <p>
-     * Este método está marcado con {@link Test} y contiene múltiples anotaciones para
-     * describir la prueba, incluyendo {@link Story}, {@link Description}, {@link Severity},
-     * y otras relacionadas con el sistema de pruebas.
-     * El flujo de prueba incluye acciones como visitar la URL especificada, limpiar cookies,
-     * y ejecutar el método correspondiente en la página.
-     * </p>
-     *
-     * <ul>
-     *   <li><b>Historia:</b> {@code TestDescription.DESC_CRM_HU_01}</li>
-     *   <li><b>Descripción:</b> {@code TestDescription.DESC_CRM_CREAR_CASO}</li>
-     *   <li><b>Severidad:</b> {@code SeverityLevel.NORMAL}</li>
-     *   <li><b>Propietario:</b> {@code TestDescription_Example.DESC_OWNER_MV}</li>
-     *   <li><b>Enlace:</b> {@code Data_CRM.DATA_CRM_URL_CREAR_CASO}</li>
-     *   <li><b>Problema relacionado:</b> {@code AUTH-123}</li>
-     *   <li><b>Referencia TMS:</b> {@code TMS-456}</li>
-     * </ul>
-     * <p>
-     * Detalle de las acciones realizadas:
-     * <ol>
-     *   <li>Registro de fecha y nombre de la prueba.</li>
-     *   <li>Visita a la URL especificada en el sistema CRM.</li>
-     *   <li>Limpieza de cookies antes de ejecutar el flujo de prueba.</li>
-     *   <li>Ejecución de la consulta presencial de trámites.</li>
-     * </ol>
-     */
+
     @Test
     @Story(TestDescription.DESC_MICHA_HU_01)
     @Description(TestDescription.DESC_MICHA_FLUJO_1)
@@ -140,9 +98,10 @@ public class Test_Micha {
         testName.set(TestDescription.DESC_MICHA_TEST_NAME_F1);
 
         ThreadContext.put("testName", testName.get());
-        
-        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F1, ExternalData_MICHA.ED_MICHA_SRC));
+
+        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_Auto.ED_MICHA_IMPERSONALIZACION_RUT_F1, ExternalData_Auto.ED_MICHA_SRC));
         page.flujo1();
     }
 
@@ -160,8 +119,9 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F2, ExternalData_MICHA.ED_MICHA_SRC));
+        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_Auto.ED_MICHA_IMPERSONALIZACION_RUT_F2, ExternalData_Auto.ED_MICHA_SRC));
         page.flujo2();
     }
 
@@ -179,8 +139,9 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F3, ExternalData_MICHA.ED_MICHA_SRC));
+        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_Auto.ED_MICHA_IMPERSONALIZACION_RUT_F3, ExternalData_Auto.ED_MICHA_SRC));
         
     }
 
@@ -198,8 +159,9 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F4, ExternalData_MICHA.ED_MICHA_SRC));
+        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_Auto.ED_MICHA_IMPERSONALIZACION_RUT_F4, ExternalData_Auto.ED_MICHA_SRC));
         page.flujo4();
     }
 
@@ -217,8 +179,9 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F5, ExternalData_MICHA.ED_MICHA_SRC));
+        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_Auto.ED_MICHA_IMPERSONALIZACION_RUT_F5, ExternalData_Auto.ED_MICHA_SRC));
         page.flujo5();
     }
 
@@ -236,8 +199,9 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F6, ExternalData_MICHA.ED_MICHA_SRC));
+        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_Auto.ED_MICHA_IMPERSONALIZACION_RUT_F6, ExternalData_Auto.ED_MICHA_SRC));
         page.flujo6();
     }
 
@@ -255,8 +219,9 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F7, ExternalData_MICHA.ED_MICHA_SRC));
+        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_Auto.ED_MICHA_IMPERSONALIZACION_RUT_F7, ExternalData_Auto.ED_MICHA_SRC));
         page.flujo7();
     }
 
@@ -274,8 +239,9 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F8, ExternalData_MICHA.ED_MICHA_SRC));
+        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_Auto.ED_MICHA_IMPERSONALIZACION_RUT_F8, ExternalData_Auto.ED_MICHA_SRC));
         page.flujo8();
     }
 
@@ -293,8 +259,9 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F9, ExternalData_MICHA.ED_MICHA_SRC));
+        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_Auto.ED_MICHA_IMPERSONALIZACION_RUT_F9, ExternalData_Auto.ED_MICHA_SRC));
         page.flujo9();
     }
 
@@ -312,8 +279,9 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F10, ExternalData_MICHA.ED_MICHA_SRC));
+        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_Auto.ED_MICHA_IMPERSONALIZACION_RUT_F10, ExternalData_Auto.ED_MICHA_SRC));
         page.flujo10();
     }
 
@@ -331,21 +299,29 @@ public class Test_Micha {
 
         ThreadContext.put("testName", testName.get());
 
-        page.impersonalizador(page.getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_IMPERSONALIZACION,
-                ExternalData_MICHA.ED_MICHA_IMPERSONALIZACION_RUT_F12, ExternalData_MICHA.ED_MICHA_SRC));
+        page.iniciarSesion();
+        page.impersonalizador(page.getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_IMPERSONALIZACION,
+                ExternalData_Auto.ED_MICHA_IMPERSONALIZACION_RUT_F12, ExternalData_Auto.ED_MICHA_SRC));
         page.flujo12();
     }
 
     /**
-     * Finaliza la sesión del WebDriver después de que se ejecuten las pruebas.
+     * Finaliza la ejecución de la prueba cerrando el navegador.
      * <p>
-     * Este método está marcado con {@link AfterTest} y se encarga de liberar
-     * los recursos utilizados por el WebDriver. Se ejecuta después de la finalización
-     * de todas las pruebas en la clase.
-     * </p>
+     * Se ejecuta después de cada método de prueba, garantizando el cierre
+     * del {@link WebDriver} aunque la prueba falle.
+     *
+     * @param result resultado del test ejecutado, proporcionado por TestNG.
      */
-    @AfterTest
-    public void afterClass() {
-        page.quitDriver();
+    @AfterMethod(alwaysRun = true)
+    public void tearDown(ITestResult result) {
+        try {
+            if (driver != null) {
+                driver.quit();
+                driver = null;
+            }
+        } catch (Exception e) {
+            Log.info(e.getMessage());
+        }
     }
 }

@@ -1,5 +1,12 @@
 package pom.auto.repository;
 
+/**
+ * Clase que centraliza descripciones y nombres de pruebas para la documentación
+ * y reporting en los tests automatizados.
+ * <p>
+ * Las constantes pueden ser utilizadas en anotaciones de Allure, logs, o nombres
+ * de tests, asegurando consistencia y facilidad de mantenimiento.
+ */
 public class TestDescription {
 
     public static final String DESC_MICHA_FLUJO_1 = "MICHA Flujo 1";

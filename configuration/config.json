@@ -1,13 +1,19 @@
 {
   "webDriverConfiguration": {
+    "cleanProject": true,
+    "cleanReport": true,
     "headless": true,
+    "retry": false,
+    "retryCount": 0,
     "downloads": "src/test/resources/downloads/",
     "uploads": "./src/test/resources/uploads/",
     "evidences": "./src/test/resources/evidencias/",
     "parallel": "tests",
-    "threadCount": 20,
-    "urlTest": "https://mi3.dev.chileatiende.cl/micha/inicio",
-    "browserSize": "--window-size=1920,1080"
+    "threadCount": 15,
+    "environment": "QA",
+    "browserSize": "--window-size=1920,1080",
+    "webdriverHidden": true,
+    "browser": "CHROME"
   },
   "tests": {
     "micha": {
@@ -66,6 +72,11 @@
   "archivos": {
     "archivo1": "src/test/resources/uploads/test.txt",
     "archivo2": "src/test/resources/uploads/test.txt"
+  },
+  "urls": {
+    "urlDev": "https://mi3.dev.chileatiende.cl/micha/inicio",
+    "urlQA": "https://mi3.dev.chileatiende.cl/micha/inicio",
+    "urlProd": "https://mi3.dev.chileatiende.cl/micha/inicio"
   },
   "credenciales": {
     "userRun": "444444444",

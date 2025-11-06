@@ -4,22 +4,80 @@ import io.qameta.allure.Allure;
 import org.openqa.selenium.WebDriver;
 import pom.Base;
 import pom.auto.elements.Elements;
-import pom.auto.repository.ExternalData_MICHA;
+import pom.auto.repository.ExternalData_Auto;
 import pom.auto.repository.TestSteps;
+import pom.general_repository.ExternalData;
+import pom.retry.RetryAnalyzer;
 
+import java.io.IOException;
+
+/**
+ * Clase que centraliza los flujos de navegación y acciones del sistema,
+ * utilizando las funciones base que interactúan directamente con el navegador.
+ * <p>
+ * Extiende la clase {@link Base} para reutilizar sus métodos de control del WebDriver
+ * y facilitar la construcción de flujos automatizados.
+ */
 public class Page extends Base {
+    /**
+     * Inicializa la página con el controlador del navegador.
+     *
+     * @param driver instancia de {@link WebDriver}.
+     */
     public Page(WebDriver driver) {
         super(driver);
+    }
+
+    /**
+     * Configura el entorno inicial de ejecución antes de iniciar las pruebas automatizadas.
+     * <p>
+     * Este método realiza los siguientes pasos:
+     * <ul>
+     *     <li>Lee la configuración del driver desde un archivo JSON externo.</li>
+     *     <li>Activa o desactiva la lógica de reintento según la configuración establecida.</li>
+     *     <li>Maximiza la ventana del navegador si no se ejecuta en modo headless.</li>
+     *     <li>Navega a la URL base del entorno configurado.</li>
+     *     <li>Toma una captura de pantalla inicial del estado de la página.</li>
+     * </ul>
+     *
+     * @throws IOException si ocurre un error al leer los datos de configuración externa.
+     */
+    public void setup() throws IOException {
+        Allure.step(TestSteps.STEP_SETUP, (step) ->
+        {
+            boolean retry = getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
+                    ExternalData.ED_RETRY, ExternalData.ED_SOURCE);
+            int retryCount = getJsonInt(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
+                    ExternalData.ED_RETRY_COUNT, ExternalData.ED_SOURCE);
+
+            if (retry && retryCount > 0) {
+                RetryAnalyzer.setEnableRetry(true);
+                RetryAnalyzer.setMaxRetryCount(retryCount);
+            } else {
+                RetryAnalyzer.setEnableRetry(false);
+            }
+
+            if (!getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_HEADLESS,
+                    ExternalData.ED_SOURCE)) {
+                maximizeScreen();
+            }
+
+            visitUrlIndex(getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
+                    ExternalData.ED_ENVIRONMENT,
+                    ExternalData.ED_SOURCE));
+
+            screenShot();
+        });
     }
 
     public void iniciarSesion() {
         Allure.step(TestSteps.TS_MICHA_LOGIN, (step) -> {
             waitForElementToBeClickable(Elements.ELM_MICHA_BUTTON_INICIAR_SESION);
-            sendInputText(getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_CREDENCIALES,
-                            ExternalData_MICHA.ED_MICHA_CREDENCIALES_USER_RUN, ExternalData_MICHA.ED_MICHA_SRC),
+            sendInputText(getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_CREDENCIALES,
+                            ExternalData_Auto.ED_MICHA_CREDENCIALES_USER_RUN, ExternalData_Auto.ED_MICHA_SRC),
                     Elements.ELM_MICHA_TEXTBOX_RUN);
-            sendInputText(getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_CREDENCIALES,
-                            ExternalData_MICHA.ED_MICHA_CREDENCIALES_USER_PASS, ExternalData_MICHA.ED_MICHA_SRC),
+            sendInputText(getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_CREDENCIALES,
+                            ExternalData_Auto.ED_MICHA_CREDENCIALES_USER_PASS, ExternalData_Auto.ED_MICHA_SRC),
                     Elements.ELM_MICHA_TEXTBOX_PASS);
             screenShot();
             waitForElementToBeClickable(Elements.ELM_MICHA_BUTTON_INGRESA);
@@ -44,8 +102,8 @@ public class Page extends Base {
             waitForElementToBeClickable(Elements.ELM_MICHA_LINK_MI_PERFIL_EDITAR);
             waitForVisibilityOfElementLocated(Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_DIRECCION);
             clearText(Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_DIRECCION);
-            sendInputText(getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_CONTACTO,
-                            ExternalData_MICHA.ED_MICHA_CONTACTO_DIRECCION, ExternalData_MICHA.ED_MICHA_SRC),
+            sendInputText(getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_CONTACTO,
+                            ExternalData_Auto.ED_MICHA_CONTACTO_DIRECCION, ExternalData_Auto.ED_MICHA_SRC),
                     Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_DIRECCION);
 
             waitForElementToBeClickable(Elements.ELM_MICHA_CONTACTO_REGION);
@@ -53,12 +111,12 @@ public class Page extends Base {
             waitForElementToBeClickable(Elements.ELM_MICHA_CONTACTO_COMUNA);
             waitForElementToBeClickable(Elements.ELM_MICHA_CONTACTO_COMUNA_OPCION);
             clearText(Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_FONO);
-            sendInputText(getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_CONTACTO,
-                            ExternalData_MICHA.ED_MICHA_CONTACTO_FONO, ExternalData_MICHA.ED_MICHA_SRC),
+            sendInputText(getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_CONTACTO,
+                            ExternalData_Auto.ED_MICHA_CONTACTO_FONO, ExternalData_Auto.ED_MICHA_SRC),
                     Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_FONO);
             clearText(Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_EMAIL);
-            sendInputText(getJsonString(ExternalData_MICHA.ED_MICHA_OBJECT_CONTACTO,
-                            ExternalData_MICHA.ED_MICHA_CONTACTO_EMAIL, ExternalData_MICHA.ED_MICHA_SRC),
+            sendInputText(getJsonString(ExternalData_Auto.ED_MICHA_OBJECT_CONTACTO,
+                            ExternalData_Auto.ED_MICHA_CONTACTO_EMAIL, ExternalData_Auto.ED_MICHA_SRC),
                     Elements.ELM_MICHA_TEXTBOX_MI_PERFIL_EMAIL);
             waitForElementToBeClickable(Elements.ELM_MICHA_BUTTON_MI_PERFIL_GUARDAR);
             waitForVisibilityOfElementLocated(Elements.ELM_MICHA_LBL_MI_PERFIL_MENSAJE_CAMBIOS_GUARDADOS);

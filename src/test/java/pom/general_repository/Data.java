@@ -8,6 +8,7 @@ public class Data {
     public static final String DATA_BROWSER_DOWNLOAD_PROMPT = "download.prompt_for_download";
     public static final String DATA_BROWSER_SETTINGS_POPUPS = "profile.default_content_settings.popups";
     public static final String DATA_BROWSER_OPEN_PDF_EXTERNAL = "plugins.always_open_pdf_externally";
+    public static final String DATA_BROWSER_PASSWORD_LEAK_DETECTION = "profile.password_manager_leak_detection";
     public static final String DATA_FECHA_DDMMYYYY = "dd-MM-yyyy HH mm ss";
     public static final String DATA_BROWSER_CHROME = "Google Chrome";
     public static final String DATA_BROWSER_EDGE = "Microsoft Edge";
@@ -35,4 +36,14 @@ public class Data {
     public static final String DATA_OWNER_MV = "Matías Valenzuela";
     public static final String DATA_FILE_TYPE_DOCX = ".docx";
     public static final String DATA_FILE_TYPE_CRDOWNLOAD = ".crdownload";
+    public static final String DATA_WEBDRIVER_HIDDEN =
+            "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
+                    "Chrome/117.0.0.0 Safari/537.36";
+    public static final String DATA_ENV_DEV = "DEV";
+    public static final String DATA_ENV_QA = "QA";
+    public static final String DATA_ENV_PROD = "PROD";
+    public static final String BC_PREF_HEADLESS = "--headless=new";
+    public static final String BC_PREF_DOWNLOAD_DIRECTORY_FOLDER_LIST_KEY_FIREFOX = "browser.download.dir";
+    public static final int BC_PREF_DOWNLOAD_DIRECTORY_FOLDER_LIST_VALUE_FIREFOX = 2;
+    public static final String BC_PREF_DOWNLOAD_DIRECTORY_FIREFOX = "browser.download.dir";
 }

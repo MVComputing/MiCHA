@@ -1,6 +1,15 @@
 package pom.auto.repository;
 
+/**
+ * Clase que centraliza la descripción de los pasos de prueba utilizados
+ * en los reportes y logs de la ejecución.
+ * <p>
+ * Permite mantener consistencia y facilitar la lectura de los reportes Allure
+ * o cualquier sistema de logging.
+ */
 public class TestSteps {
+    /** Descripción del paso de configuración inicial antes de ejecutar los tests. */
+    public static final String STEP_SETUP = "Inicio de pruebas en web";
     public static final String TS_MICHA_LOGIN = "Inicio de sesion";
     public static final String TS_MICHA_IMPERSONALIZADOR = "Impersonalizador";
     public static final String TS_MICHA_Flujo_1 = "Edición de datos de contacto";

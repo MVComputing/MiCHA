@@ -2,6 +2,12 @@ package pom.auto.elements;
 
 import org.openqa.selenium.By;
 
+/**
+ * Clase que centraliza los selectores de los elementos web utilizados en las pruebas.
+ * <p>
+ * Contiene únicamente constantes de tipo {@link By} para facilitar el mantenimiento
+ * y la reutilización de los localizadores en los flujos de prueba.
+ */
 public class Elements {
     public static final By ELM_MICHA_BUTTON_INICIAR_SESION =
             By.xpath("//button//span[text()='Iniciar sesión']");
@@ -55,11 +61,11 @@ public class Elements {
     public static final By ELM_MICHA_AR_LINK_MI_REGISTRO_SOCIAL =
             By.xpath("//a[@href='/micha/rsh' and .//h4[text()='Mi Registro Social de Hogares']]");
     public static final By ELM_MICHA_AR_LINK_MIS_DEUDAS_FINANCIERAS=
-            By.xpath("//a[@href='/micha/mis-deudas' and .//h4[text()='Mis deudas financieras']]");
+            By.xpath("//a[text()='Mis deudas financieras']");
     public static final By ELM_MICHA_AR_LINK_MIS_PAGOS_BENEFICIOS_SOCIALES =
             By.xpath("//a[@href='/micha/mis-pagos' and .//h4[text()='Mis pagos de beneficios sociales']]");
     public static final By ELM_MICHA_AR_LINK_MIS_CAPACITACIONES =
-            By.xpath("//a[@href='/micha/sence' and .//h4[text()='Mis capacitaciones']]");
+            By.xpath("//a[text()='Mis capacitaciones']");
     public static final By ELM_MICHA_AR_LINK_MI_SEGURO_SOCIAL =
             By.xpath("//a[@href='/micha/mi-seguro-previsional' and .//h4[text()='Mi Seguro Social']]");
     public static final By ELM_MICHA_MC_LINK_MIS_CAPACITACIONES =

@@ -2,6 +2,8 @@ package utils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 /**
  * Clase utilitaria para el manejo de registros de log en la aplicación.
@@ -14,6 +16,11 @@ public class Log {
 	 * Instancia del logger utilizado para registrar los mensajes.
 	 */
 	private static final Logger logger = LogManager.getLogger();
+	/**
+	 * Marcador de log utilizado para categorizar mensajes de trazabilidad (trace)
+	 * relacionados con acciones específicas en la ejecución.
+	 */
+	private static final Marker TRACE_ACTION = MarkerManager.getMarker("TRACE_ACTION");
 
 	/**
 	 * Registra un mensaje de tipo informativo.
@@ -23,6 +30,12 @@ public class Log {
 	public static void info(String message) {
 		logger.info(message);
 	}
+	/**
+	 * Registra un mensaje de información en el log con un formato o traza predefinida.
+	 *
+	 * @param message mensaje que se desea registrar.
+	 */
+	public static void infoMaker(String message) { logger.info(TRACE_ACTION, message);}
 
 	/**
 	 * Registra un mensaje de advertencia.

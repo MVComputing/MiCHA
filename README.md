@@ -1,40 +1,71 @@
-# Automatización Base
+# Automatización MiCha
 
-Proyecto de pruebas automatizadas con Selenium Web driver utilizando el marco de trabajo de pruebas de TestNG con lenguaje Java, gestionando módulos, paquetes, dependencias y compilación de código con herramienta Maven. Además, de generar reportes con herramienta Allure reports.
+Este proyecto consiste en la automatización de pruebas funcionales utilizando Selenium WebDriver como herramienta principal para la interacción con aplicaciones web. Las pruebas están estructuradas con el framework de pruebas TestNG, lo que permite una gestión eficiente de casos de prueba, ejecución paralela y control personalizado de suites de prueba.
+
+El desarrollo se realizó en Java, y se utilizó Apache Maven para la gestión de dependencias, construcción del proyecto y organización modular del código en paquetes reutilizables y mantenibles.
+
+Además, se integró Allure Reports para la generación de reportes visuales y detallados sobre los resultados de las ejecuciones de prueba, facilitando el análisis de fallos, la trazabilidad y el seguimiento del estado de cada escenario probado.
 
 ## Herramientas necesarias
 
-Es necesario la instalación de tres herramientas para la ejecución del proyecto, las cuales son:
+Para ejecutar este proyecto de automatización es necesario tener instaladas las siguientes herramientas en el entorno de desarrollo:
 
-* JDK 23 
-* Apache Maven 
-* Allure Reports
+>* Java Development Kit (JDK) 23 – Requerido para compilar y ejecutar el código Java.
+>* Apache Maven – Utilizado para la gestión de dependencias, compilación y ejecución del proyecto.
+>* Allure Commandline – Necesario para generar y visualizar los reportes de ejecución de pruebas.
 
 Las herramientas se pueden encontrar en el siguiente enlace: [Herramientas](https://chileatiendet.sharepoint.com/sites/AnalistasdeCalidad/Documentos%20compartidos/Forms/AllItems.aspx?id=%2Fsites%2FAnalistasdeCalidad%2FDocumentos%20compartidos%2FRepositorio%20Publico%2FRequerimientos%20QA%2FAutomatizaci%C3%B3n%2FPruebas%20funcionales%2FHerramientas&viewid=a2b7ec2d%2D0e53%2D4d01%2D9b1e%2Dec8570da01ad&ga=1)
 
 ## Instalación de Herramientas
 
-1. Extraer las herramientas descargadas en cualquier directorio del computador.
-2. Agregar la ruta de cada una de las herramientas descargadas hasta "bin" en el path de las variables de entorno.
-   * Ejemplo: D:\Herramientas\allure-2.33.0\bin
-3. Agregar la variable de sistema "JAVA_HOME" y que esta apunte al directorio del jdk.
-   * Ejemplo: D:\Herramientas\jdk-23.0.2
+1. **Extraer las herramientas**  
+   Descarga y descomprime cada herramienta en el directorio que prefieras.
+   > Ejemplo:  
+   > `D:\Herramientas\jdk-23.0.2`  
+   > `D:\Herramientas\apache-maven-3.9.6`  
+   > `D:\Herramientas\allure-2.33.0`
+
+2. **Agregar rutas al `PATH` del sistema**  
+   Agrega las siguientes rutas (hasta la carpeta `bin`) en las variables de entorno del sistema (`PATH`):
+
+   > `D:\Herramientas\jdk-23.0.2\bin`
+   > `D:\Herramientas\apache-maven-3.9.6\bin`
+   > `D:\Herramientas\allure-2.33.0\bin`
+
+3. **Configurar la variable de sistema `JAVA_HOME`**  
+   Crea una variable de entorno llamada `JAVA_HOME` y asigna como valor la ruta de instalación del JDK (sin incluir `\bin`):
+
+   > `JAVA_HOME = D:\Herramientas\jdk-23.0.2`
+
+4. **Verificar configuración**  
+   Abre una terminal y ejecuta los siguientes comandos para verificar que todo está correctamente configurado:
+
+   ```bash
+   java -version
+   mvn -version
+   allure --version
 
 ## Archivo de configuración (config.json)
-Este archivo contiene los parámetros de configuración utilizados por el proyecto de automatización. Permite modificar 
-fácilmente valores clave sin necesidad de alterar el código fuente.
+Este archivo contiene los parámetros clave de configuración utilizados por el proyecto de automatización. Su propósito es permitir la modificación dinámica de valores importantes sin necesidad de alterar el código fuente.
 
 Ejemplo de contenido de config.json:
 ```
 {
   "webDriverConfiguration": {
+    "cleanProject": false,
+    "cleanReport": true,
     "headless": true,
-    "downloads": "./src/test/resources/downloads/",
+    "retry": false,
+    "retryCount": 0,
+    "downloads": "src/test/resources/downloads/",
     "uploads": "./src/test/resources/uploads/",
-    "evidences": "./src/test/resources/",
+    "evidences": "./src/test/resources/evidencias/",
     "parallel": "tests",
-    "threadCount": 9,
-    "urlTest" : "Url de pruebas"
+    "threadCount": 25,
+    "environment": "QA",
+    "browserSize": "--window-size=1920,1080",
+    "webdriverHidden": false
+    "browser": "CHROME"
   },
   "tests": {
     "suiteTest": {
@@ -51,52 +82,74 @@ Ejemplo de contenido de config.json:
   },
 }
 ```
-Descripción de los campos:
+## Detalle de configuración – `config.json`
 
-* webdriverConfiguration: objeto que contiene la configuración del web driver.
-* headless: ejecuta el navegador en modo sin interfaz gráfica (true o false).
-* downloads: ruta de la carpeta de descargas.
-* uploads: ruta de la carpeta de los archivos para cargar en una web.
-* evidences: ruta de la carpeta de evidencias.
-* parallel: indica el método de pruebas (suites, tests o methods).
-* threadCount: indica la cantidad de hilos que se ejecutaran por suite.
+### `webDriverConfiguration`
 
-* tests: objeto que incluye todas las suite de pruebas.
+Contiene la configuración relacionada con la ejecución del navegador:
 
-* suiteTest: objeto que representa la suite de pruebas la cual contiene los flujos de pruebas.
-* active: indica si la suite de pruebas se encuentra activa para su ejecución.
-* suitename: nombre de la suite de pruebas.
+- **`headless`**: Ejecuta el navegador en modo sin interfaz gráfica (true o false).
+- **`cleanProject`**: realiza una limpieza completa del proyecto antes de ejecutar (true o false).
+- **`cleanReport`**: realiza una limpieza de los reportes generados anteriormente (true o false).
+- **`headless`**: ejecuta el navegador en modo sin interfaz gráfica (true o false).
+- **`retry`**: habilita los reintentos de las pruebas (true o false).
+- **`retryCount`**: cantidad de reintentos por prueba fallida.
 
-* flow: objeto que representa a uno de los flujos de pruebas de la suite.
-* active: indica si el flujo de pruebas se encuentra activo para su ejecución.
-* name: nombre del flujo de pruebas.
+- **`downloads`**: Ruta donde se guardarán los archivos descargados.
+- **`uploads`**: Ruta de los archivos que se usarán para carga en formularios web.
+- **`evidences`**: Ruta donde se almacenarán evidencias (screenshots, logs, etc.).
+- **`parallel`**: Tipo de paralelismo para la ejecución de pruebas (suites, tests, methods).
+- **`threadCount`**: Número de hilos utilizados para la ejecución paralela.
+- **`environment`**: Ambiente de pruebas que se ejecutara (DEV, QA, PROD).
+- **`browserSize`**: Para definir el tamaño de la ventana del navegador.
+- **`webdriverHidden`**: Para ocultar el uso del webdriver al navegador (true o false).
+- **`browser`**: Para indicar cual es navegador que se utilizara (CHROME, FIREFOX, EDGE).
 
-* dataExample: objeto que contiene data externa que puede ser utilizada en la automatización.
-* userExample: ejemplo de data externa.
-```
- Nota: para los campos "suiteTest", "flow", "dataExample" y "userExample", sus nombres en esta 
-       descripción son solo de ejemplo.
-```
-Uso del archivo:
+---
 
-El archivo es leído por la clase de configuración, TestNGXmlGenerator, al inicio de la ejecución de las pruebas. Para 
-esto luego de haber modificado el archivo con los datos deseados se debe ejecutar el siguiente comando:
-```
-mvn exec:java "-Dexec.mainClass=utils.TestNGXmlGenerator"
-```
-Tras ejecutar este comando, se genera un directorio llamado "suites" ubicado en la ruta src/test/resources el cual 
-contiene los archivos .xml que corresponden a las suites de pruebas.
+### `tests`
 
-## Ejecución a tráves de línea de comandos
+Objeto que contiene la definición de las suites y flujos de pruebas a ejecutar:
 
-Una vez generados los archivos de suites de pruebas ya es posible ejecutar el proyecto de automatización, a 
+- **`suiteTest`**: Objeto que representa una suite de pruebas.
+   - **`active`**: Define si la suite está activa para su ejecución (`true` o `false`).
+   - **`suiteName`**: Nombre identificador de la suite.
+   - **`flow`**: Objeto que representa un flujo de prueba dentro de la suite.
+      - **`active`**: Define si el flujo está activo para su ejecución.
+      - **`name`**: Nombre del flujo de prueba.
+---
+
+### `dataExample`
+
+Contiene datos externos que pueden ser utilizados durante la ejecución de pruebas:
+
+- **`userExample`**: Ejemplo de valor externo que puede utilizarse en una prueba.
+
+> **Nota:** Los nombres como `suiteTest`, `flow`, `dataExample` y `userExample` son solo ejemplos.  
+> Se pueden renombrar según la lógica o estructura de pruebas del proyecto.
+
+### Uso del archivo:
+
+El archivo `config.json` es leído automáticamente al inicio de la ejecución por la clase `TestNGXmlGenerator`, la cual se encarga de generar dinámicamente los archivos `.xml` de TestNG que definen las suites de pruebas activas según la configuración establecida.
+
+### Pasos para utilizarlo (Manual):
+
+1. Modifica el archivo `config.json` con los valores deseados (activación de suites, flujos, datos, etc.).
+2. Ejecuta el siguiente comando Maven en la raíz del proyecto:
+
+   ```
+   mvn exec:java "-Dexec.mainClass=utils.TestNGXmlGenerator"
+
+## Ejecución a tráves de línea de comandos (Manual)
+
+Una vez generados los archivos de suites de pruebas ya es posible ejecutar el proyecto de automatización, a
 continuación se detallan los pasos a seguir para una correcta ejecución:
 
 1. Dirigirse al directorio del proyecto en donde se encuentra el archivo testng.xml
    ```
    cd C:\usuario\escritorio\Selenium-Java-TestNG-Allure-Maven
    ```
-2. Ejecutar el proyecto realizando una limpieza antes. (Ideal para la primera ejecución)
+2. Ejecutar el proyecto realizando una limpieza del proyecto antes. (Ideal para la primera ejecución)
    ```
    mvn clean test -DsuiteXmlFile=testng
    ```
@@ -104,7 +157,7 @@ continuación se detallan los pasos a seguir para una correcta ejecución:
    ```
    mvn test -DsuiteXmlFile=testng
    ```
-3. Finalizada la ejecución dirigirse al directorio target.
+3. Finalizada la ejecución, accede al directorio donde se generan los resultados y reportes.
    ```
    cd target
    ```
@@ -112,15 +165,14 @@ continuación se detallan los pasos a seguir para una correcta ejecución:
    ```
    allure generate allure-results --clean -o allure-report
    ```
-5. Una vez generado el reporte se puede agregar el historial de ejecuciones, para esto primero se debera 
-   crear el directorio. Solo se hace una vez, luego se volveria a usar si se ejecuta con mvn clean o el 
-   directorio "target" es eliminado.
+5. Para mantener el historial de ejecuciones en los reportes futuros, crea el directorio correspondiente.
+   Si el directorio target es limpiado (mvn clean) o eliminado, deberás repetir este paso.
    ```
    mkdir -p allure-results/history
    ```
 6. Creado el directorio para el historial se debe copiar el historial de allure-report en allure-results.
-   
-   Comando con powershell: 
+
+   Comando con powershell:
    ```
    cp -r allure-report/history/* allure-results/history/
    ```     
@@ -136,11 +188,25 @@ continuación se detallan los pasos a seguir para una correcta ejecución:
    ```  
    ctrl + c
    ```     
-9. También es posible generar el reporte en un solo archivo. Para una correcta visualización hacer pasos 
+9. También es posible generar el reporte en un solo archivo. Para una correcta visualización hacer pasos
    4 y 6, el archivo quedará disponible en la ruta "target/allure-report".
    ```
    allure generate --clean --single-file allure-results 
    ```
-   
+## Ejecución a tráves de archivo ps1 (PowerShell)
+
+Se puede ejecutar la automatización de forma sencilla utilizando el archivo ubicado en el directorio "scripts"
+del proyecto llamado "run-test.ps1". Para esta ejecución es necesario habilitar la ejecución de script con powershell y
+ya solo se deben indicar los valores deseados en el archivo "config.json".
+   ```
+   Set-ExecutionPolicy RemoteSigned 
+   ```
+
+## Ejecución a tráves de archivo bat (CMD)
+
+Se puede ejecutar la automatización de forma sencilla utilizando el archivo ubicado en el directorio "scripts"
+del proyecto llamado "test.bat". Para esta ejecución solo se deben indicar los valores deseados en el archivo
+"config.json".
+
 ## Ejemplo de reportes de allure
 ![Captura de pantalla](src/test/resources/img/allure.png)

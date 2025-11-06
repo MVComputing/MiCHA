@@ -1,7 +1,21 @@
 package pom.auto.repository;
-
-public class ExternalData_MICHA {
-
+/**
+ * Clase que centraliza rutas y claves de configuración externas para las pruebas automáticas.
+ * <p>
+ * Contiene constantes para acceder a archivos JSON y a claves específicas dentro
+ * de esos archivos.
+ */
+public class ExternalData_Auto {
+    /** Ruta al archivo de configuración JSON principal. */
+    public static final String ED_SRC = "./configuration/config.json";
+    /** Clave principal para acceder a la sección de URLs en el JSON. */
+    public static final String ED_OBJECT_URLS = "urls";
+    /** Clave para la URL del entorno de desarrollo. */
+    public static final String ED_URL_DEV = "urlDev";
+    /** Clave para la URL del entorno de pruebas QA. */
+    public static final String ED_URL_QA = "urlQA";
+    /** Clave para la URL del entorno de producción. */
+    public static final String ED_URL_PROD = "urlProd";
     public static final String ED_MICHA_SRC = "./configuration/config.json";
 
     public static final String ED_MICHA_OBJECT_CREDENCIALES = "credenciales";

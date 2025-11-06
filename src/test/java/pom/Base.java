@@ -12,10 +12,14 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.*;
 
 import io.qameta.allure.Allure;
 import org.testng.Assert;
+import org.testng.ITestResult;
+import org.testng.Reporter;
+import pom.auto.repository.ExternalData_Auto;
 import pom.general_repository.*;
 import utils.Log;
 
@@ -41,107 +45,58 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
- * Clase base que contiene todas las funciones y métodos a utilizar en la automatización.
+ * Clase base que contiene las funciones genéricas para la interacción con el navegador.
+ * <p>
+ * Proporciona métodos comunes para control del {@link org.openqa.selenium.WebDriver},
+ * manejo de esperas, navegación, capturas de pantalla y otras acciones reutilizables
+ * por las clases que extienden esta base.
  */
 public class Base {
 
     /**
-     * Driver utilizado para interactuar con los navegadores web durante la ejecución de las pruebas.
-     *
-     * <p>
-     * Este objeto es una instancia del WebDriver que controla el navegador subyacente.
-     * Se inicializa en métodos específicos y se utiliza para realizar operaciones como navegar,
-     * encontrar elementos y automatizar interacciones en páginas web.
-     * </p>
+     * Controlador principal del navegador web.
      */
     public WebDriver driver;
 
     /**
-     * Fecha actual utilizada en el programa.
-     * Esta variable estática puede ser compartida entre todas las instancias de la clase.
-     * Es una representación en formato de cadena de caracteres (String).
+     * Devuelve la instancia actual del navegador.
      *
-     * <p>Ejemplo de uso:</p>
-     * <pre>
-     * {@code
-     * Base.date = "2025-03-31";
-     * System.out.println(Base.date);
-     * }
-     * </pre>
+     * @return el objeto WebDriver en uso
+     */
+    public WebDriver getDriver() {
+        return driver;
+    }
+
+    /**
+     * Fecha actual usada en las pruebas.
      */
     public static String date;
 
     /**
-     * Nombre del caso de prueba en ejecución.
-     * Esta variable estática almacena el nombre del test actual para facilitar
-     * la identificación y el seguimiento durante la ejecución de las pruebas automatizadas.
-     *
-     * <p>Ejemplo de uso:</p>
-     * <pre>
-     * {@code
-     * testName.set("Nombre de la prueba");
-     * System.out.println("Ejecutando: " + testName.get());
-     * }
-     * </pre>
+     * Nombre del test actual, almacenado en un ThreadLocal.
      */
     public static ThreadLocal<String> testName = ThreadLocal.withInitial(() -> "Default Test Name");
 
     /**
-     * Nombre del navegador utilizado para la ejecución de pruebas automatizadas.
-     * Esta variable estática permite identificar qué navegador está en uso
-     * (por ejemplo, Chrome, Firefox o Edge) y facilita la configuración dinámica
-     * basada en el navegador seleccionado.
-     *
-     * <p>Ejemplo de uso:</p>
-     * <pre>
-     * {@code
-     * Base.browser = "Firefox";
-     * System.out.println("Navegador en uso: " + Base.browser);
-     * }
-     * </pre>
+     * Navegador utilizado en la ejecución de las pruebas.
      */
     public static String browser;
 
     /**
-     * Constructor de la clase Base.
-     * Inicializa el controlador WebDriver utilizado para la automatización de pruebas.
+     * Crea una nueva instancia de Base con el WebDriver especificado.
      *
-     * @param driver Instancia de {@link WebDriver} que controla el navegador en uso.
-     *               <p>
-     *               Ejemplo de uso:
-     *               <pre>
-     *                                           {@code
-     *                                           WebDriver driver = new FirefoxDriver();
-     *                                           Base baseInstance = new Base(driver);
-     *                                           }
-     *                                           </pre>
+     * @param driver instancia del navegador a usar
      */
     public Base(WebDriver driver) {
         this.driver = driver;
     }
 
-    /**
-     * Establece la conexión con el WebDriver de Firefox.
-     * <p>
-     * Este método inicializa un nuevo objeto {@link FirefoxDriver}.
-     * Si la inicialización falla por alguna razón, el método captura las
-     * excepciones relevantes y registra el error correspondiente.
-     * En caso de que no se pueda crear el driver o se capture una
-     * {@link NullPointerException}, el método finaliza la sesión del driver.
-     * </p>
-     *
-     * @throws AssertionError si no se puede crear el driver o si ocurre una excepción.
-     *                        <p>
-     *                        Registro de excepciones manejadas:
-     *                        <ul>
-     *                          <li>{@link SessionNotCreatedException}: Error al crear la sesión del driver.</li>
-     *                          <li>{@link NullPointerException}: Error inesperado al intentar inicializar el driver.</li>
-     *                        </ul>
-     */
-    public void firefoxDriverConnection() {
+    /*public void firefoxDriverConnection() {
         Log.info(LogInfo.LOG_FIREFOX_CONNECTION);
 
         try {
@@ -160,28 +115,9 @@ public class Base {
                     nullPointerException.getMessage());
             quitDriver();
         }
-    }
+    }*/
 
-    /**
-     * Establece la conexión personalizada con el WebDriver de Firefox usando {@link FirefoxOptions}.
-     * <p>
-     * Este método permite inicializar un nuevo objeto {@link FirefoxDriver}
-     * con configuraciones específicas proporcionadas en un objeto de {@link FirefoxOptions}.
-     * En caso de que ocurran errores durante la inicialización, se manejan las excepciones y se registra
-     * el mensaje de error correspondiente. Si no se puede crear el driver o se captura una
-     * {@link NullPointerException}, el método finaliza la sesión del driver.
-     * </p>
-     *
-     * @param options Configuraciones personalizadas para el {@link FirefoxDriver}.
-     * @throws AssertionError si no se puede crear el driver o si ocurre una excepción.
-     *                        <p>
-     *                        Registro de excepciones manejadas:
-     *                        <ul>
-     *                          <li>{@link SessionNotCreatedException}: Error al crear la sesión del driver.</li>
-     *                          <li>{@link NullPointerException}: Error inesperado durante la inicialización del driver.</li>
-     *                        </ul>
-     */
-    public void firefoxDriverConnectionOptions(FirefoxOptions options) {
+    /*public void firefoxDriverConnectionOptions(FirefoxOptions options) {
         Log.info(LogInfo.LOG_FIREFOX_CUSTOM_CONNECTION);
 
         try {
@@ -199,24 +135,8 @@ public class Base {
                     nullPointerException.getMessage());
             quitDriver();
         }
-    }
+    }*/
 
-    /**
-     * Establece la conexión con el WebDriver de Chrome.
-     * <p>
-     * Este método inicializa un nuevo objeto {@link ChromeDriver}.
-     * Si la inicialización falla, captura las excepciones relevantes, registra el error
-     * correspondiente y, si es necesario, finaliza la sesión del driver.
-     * </p>
-     *
-     * @throws AssertionError si no se puede crear el driver o si ocurre una excepción.
-     *                        <p>
-     *                        Registro de excepciones manejadas:
-     *                        <ul>
-     *                          <li>{@link SessionNotCreatedException}: Error al crear la sesión del driver.</li>
-     *                          <li>{@link NullPointerException}: Error inesperado durante la inicialización del driver.</li>
-     *                        </ul>
-     */
     public void chromeDriverConnection() {
         Log.info(LogInfo.LOG_CHROME_CONNECTION);
 
@@ -238,27 +158,23 @@ public class Base {
     }
 
     /**
-     * Establece la conexión personalizada con el WebDriver de Chrome utilizando {@link ChromeOptions}.
-     * <p>
-     * Este método inicializa un nuevo objeto {@link ChromeDriver} con las opciones específicas
-     * proporcionadas en un objeto de {@link ChromeOptions}.
-     * Si la inicialización falla, se manejan las excepciones, se registra el error correspondiente,
-     * y el método finaliza la sesión del driver si es necesario.
-     * </p>
+     * Inicializa la conexión con ChromeDriver usando las opciones especificadas.
+     * Cierra instancias previas si existen y valida la creación del nuevo WebDriver.
      *
-     * @param options Configuraciones personalizadas para el {@link ChromeDriver}.
-     * @throws AssertionError si no se puede crear el driver o si ocurre una excepción.
-     *                        <p>
-     *                        Registro de excepciones manejadas:
-     *                        <ul>
-     *                          <li>{@link SessionNotCreatedException}: Error al crear la sesión del driver.</li>
-     *                          <li>{@link NullPointerException}: Error inesperado durante la inicialización del driver.</li>
-     *                        </ul>
+     * @param options configuración personalizada de Chrome
      */
     public void chromeDriverConnectionOptions(ChromeOptions options) {
         Log.info(LogInfo.LOG_CHROME_CUSTOM_CONNECTION);
 
         try {
+            ITestResult result = Reporter.getCurrentTestResult();
+            int currentAttempt = result.getMethod().getCurrentInvocationCount();
+
+            if (currentAttempt > 1) {
+                Log.info("Cerrando instancia previa de WebDriver...");
+                quitDriver();
+            }
+
             driver = new ChromeDriver(options);
             Assert.assertNotNull(driver, AssertInfo.ASSERT_DRIVER_NOT_NULL);
             Log.info(LogInfo.LOG_WEBDRIVER_INIT);
@@ -275,23 +191,7 @@ public class Base {
         }
     }
 
-    /**
-     * Establece la conexión con el WebDriver de Microsoft Edge.
-     * <p>
-     * Este método inicializa un nuevo objeto {@link EdgeDriver}.
-     * Si la inicialización falla, captura las excepciones relevantes, registra el error correspondiente
-     * y, si es necesario, finaliza la sesión del driver.
-     * </p>
-     *
-     * @throws AssertionError si no se puede crear el driver o si ocurre una excepción.
-     *                        <p>
-     *                        Registro de excepciones manejadas:
-     *                        <ul>
-     *                          <li>{@link SessionNotCreatedException}: Error al crear la sesión del driver.</li>
-     *                          <li>{@link NullPointerException}: Error inesperado durante la inicialización del driver.</li>
-     *                        </ul>
-     */
-    public void edgeConnection() {
+    /*public void edgeConnection() {
         Log.info(LogInfo.LOG_EDGE_CONNECTION);
 
         try {
@@ -309,27 +209,9 @@ public class Base {
                     nullPointerException.getMessage());
             quitDriver();
         }
-    }
+    }*/
 
-    /**
-     * Establece la conexión personalizada con el WebDriver de Microsoft Edge utilizando {@link EdgeOptions}.
-     * <p>
-     * Este método inicializa un nuevo objeto {@link EdgeDriver} con opciones específicas
-     * proporcionadas mediante un objeto de {@link EdgeOptions}.
-     * Si ocurre un error durante la inicialización del driver, se captura la excepción correspondiente,
-     * se registra el mensaje de error y, si es necesario, se finaliza la sesión del driver.
-     * </p>
-     *
-     * @param options Configuraciones personalizadas para el {@link EdgeDriver}.
-     * @throws AssertionError si no se puede crear el driver o si ocurre una excepción.
-     *                        <p>
-     *                        Registro de excepciones manejadas:
-     *                        <ul>
-     *                          <li>{@link SessionNotCreatedException}: Error al crear la sesión del driver.</li>
-     *                          <li>{@link NullPointerException}: Error inesperado durante la inicialización del driver.</li>
-     *                        </ul>
-     */
-    public void edgeConnectionOptions(EdgeOptions options) {
+    /*public void edgeConnectionOptions(EdgeOptions options) {
         Log.info(LogInfo.LOG_EDGE_CUSTOM_CONNECTION);
 
         try {
@@ -347,870 +229,1162 @@ public class Base {
                     nullPointerException.getMessage());
             quitDriver();
         }
-    }
+    }*/
 
     /**
-     * Retorna un elemento de la web.
+     * Busca un elemento visible en la página usando el localizador indicado.
      *
-     * @param locator localizador de tipo By del elemento que se quiere encontrar.
-     * @return Este método retorna una instancia de WebElement, siempre que el elemento exista y pase las
-     * verificaciones.
-     * Si el elemento no se encuentra o no es válido, el método genera una excepción antes de retornar.
-     **/
+     * @param locator localizador del elemento
+     * @return el elemento encontrado o {@code null} si ocurre un error
+     */
     public WebElement findElement(By locator) {
-        // Encontrar el elemento usando el driver
-        WebElement element = this.driver.findElement(locator);
-
-        Log.info(LogInfo.LOG_FIND_ELEMENT + locator);
-        // Validar que el elemento no sea null
-        Assert.assertNotNull(element, AssertInfo.ASSERT_ELEMENT_NOT_NULL + locator);
-
-        // Validar que el elemento esté visible
-        //Assert.assertTrue(element.isDisplayed(), "Error: El elemento encontrado no está visible en el DOM.");
-
-        return element;
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            validateElement(element, locator);
+            Log.info(LogInfo.LOG_FIND_ELEMENT + locator);
+            return element;
+        } catch (Exception e) {
+            handleFail(locator, LogInfo.LOG_ERROR_FIND_ELEMENT + locator, e);
+            return null;
+        }
     }
 
     /**
-     * Retorna un elemento de la web como tipo Select, comúnmente utilizado para dropdowns.
+     * Busca todos los elementos visibles que coincidan con el localizador indicado.
      *
-     * @param locator localizador de tipo By del elemento que se quiere encontrar.
-     * @return Este método devuelve una instancia de la clase Select, construida usando el elemento localizado por el
-     * método findElement.
-     */
-    public Select findElementSelect(By locator) {
-        Log.info(LogInfo.LOG_FIND_ELEMENT_SELECT + locator);
-        return new Select(findElement(locator));
-    }
-
-    /**
-     * Obtiene el texto de un elemento web especificado por el localizador.
-     * Este método busca el elemento utilizando el localizador proporcionado
-     * y devuelve el texto contenido en dicho elemento.
-     *
-     * @param locator el localizador del elemento web (por ejemplo, un By.xpath o By.id).
-     * @return el texto del elemento web encontrado, o una cadena vacía si no hay texto.
-     */
-    public String getTextByLocator(By locator) {
-        Log.info(LogInfo.LOG_GET_TEXT_BY_LOCATOR + locator);
-        return findElement(locator).getText();
-    }
-
-    public boolean elementEnabled(By locator) {
-        Log.info(LogInfo.LOG_GET_TEXT_BY_LOCATOR + locator);
-        return findElement(locator).isEnabled();
-    }
-
-    /**
-     * Obtiene el texto de un elemento web especificado.
-     * Este método registra información sobre el elemento proporcionado
-     * y devuelve el texto contenido en dicho elemento.
-     *
-     * @param element el elemento web del cual se obtendrá el texto.
-     * @return el texto del elemento web encontrado, o una cadena vacía si no hay texto.
-     */
-    public String getTextByWebElement(WebElement element) {
-        Log.info(LogInfo.LOG_GET_TEXT_BY_ELEMENT + element);
-        return element.getText();
-    }
-
-    /**
-     * Encuentra una lista de elementos web utilizando un localizador específico.
-     * Este método registra información sobre el localizador proporcionado
-     * y devuelve una lista de elementos web encontrados en la página.
-     *
-     * @param locator el localizador utilizado para encontrar los elementos web
-     *                (por ejemplo, By.xpath, By.id, etc.).
-     * @return una lista de elementos web que coinciden con el localizador.
-     * Si no se encuentran elementos, devuelve una lista vacía.
+     * @param locator localizador de los elementos
+     * @return lista de elementos encontrados, o una lista vacía si no se encuentran
      */
     public List<WebElement> findElements(By locator) {
-        Log.info(LogInfo.LOG_FIND_ELEMENT_LIST + locator);
-        return this.driver.findElements(locator);
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            List<WebElement> elements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
+            if (elements == null || elements.isEmpty()) {
+                handleFail(locator, LogInfo.LOG_ERROR_FIND_ELEMENTS_NOT_FOUND + locator, null);
+            }
+            Log.info(LogInfo.LOG_FIND_ELEMENT_LIST + locator);
+            return elements;
+        } catch (Exception e) {
+            handleFail(locator, LogInfo.LOG_ERROR_FIND_ELEMENTS + locator, e);
+            return Collections.emptyList();
+        }
     }
 
     /**
-     * Selecciona una opción en un elemento desplegable (Select) utilizando el texto visible de la opción.
-     * Este método registra información relevante sobre la selección realizada y utiliza el localizador
-     * para identificar el elemento desplegable en la página.
+     * Busca un elemento <select> en la página y lo devuelve como objeto Select.
      *
-     * @param locator   el localizador del elemento desplegable (por ejemplo, By.xpath, By.id, etc.).
-     * @param seleccion el texto visible de la opción que se desea seleccionar.
+     * @param locator localizador del elemento <select>
+     * @return objeto Select correspondiente al elemento, o {@code null} si ocurre un error
+     */
+    public Select findElementSelect(By locator) {
+        try {
+            WebElement element = findElement(locator);
+            validateElement(element, locator);
+            Log.info(LogInfo.LOG_FIND_ELEMENT_SELECT + locator);
+            return new Select(element);
+        } catch (Exception e) {
+            handleFail(locator, LogInfo.LOG_ERROR_FIND_ELEMENT_SELECT + locator, e);
+            return null;
+        }
+    }
+
+    /**
+     * Selecciona un valor en un elemento <select> usando el texto visible.
+     *
+     * @param locator  localizador del elemento <select>
+     * @param seleccion texto visible a seleccionar
      */
     public void selectElementSelectByVisibleText(By locator, String seleccion) {
-        Log.info(LogInfo.LOG_SELECT_DROPDOWNLIST_ELEMENT_BY_VISIBLE_TEXT);
-        Select select = new Select(findElement(locator));
-        select.selectByVisibleText(seleccion);
+        try {
+            WebElement element = findElement(locator);
+            validateElement(element, locator);
+            Log.info(LogInfo.LOG_SELECT_DROPDOWNLIST_ELEMENT_BY_VISIBLE_TEXT + locator + ": " + seleccion);
+            Select select = new Select(element);
+            select.selectByVisibleText(seleccion);
+        } catch (Exception e) {
+            handleFail(locator, LogInfo.LOG_ERROR_SELECT_BY_VISIBLE_TEXT + locator, e);
+        }
     }
 
     /**
-     * Selecciona una opción en un elemento desplegable (Select) utilizando el valor de la opción.
-     * Este método registra información relevante sobre el localizador y las opciones seleccionadas
-     * antes de realizar la selección, asegurando un seguimiento detallado del proceso.
+     * Obtiene el texto de un elemento localizado en la página.
      *
-     * @param locator   el localizador del elemento desplegable (por ejemplo, By.xpath, By.id, etc.).
-     * @param selection el valor de la opción que se desea seleccionar.
+     * @param locator localizador del elemento
+     * @return texto del elemento, o {@code null} si ocurre un error
+     */
+    public String getTextByLocator(By locator) {
+        try {
+            WebElement element = findElement(locator);
+            validateElement(element, locator);
+            Log.info(LogInfo.LOG_GET_TEXT_BY_LOCATOR + locator);
+            return element.getText();
+        } catch (Exception e) {
+            handleFail(locator, LogInfo.LOG_ERROR_GET_TEXT_BY_LOCATOR + locator, e);
+            return null;
+        }
+    }
+
+    /**
+     * Obtiene el texto de un elemento WebElement dado.
+     *
+     * @param element elemento del cual se obtendrá el texto
+     * @return texto del elemento, o {@code null} si ocurre un error
+     */
+    public String getTextByWebElement(WebElement element) {
+        try {
+            validateElement(element, null);
+            Log.info(LogInfo.LOG_GET_TEXT_BY_ELEMENT + element);
+            return element.getText();
+        } catch (Exception e) {
+            handleFail(null, LogInfo.LOG_ERROR_GET_TEXT_BY_ELEMENT + element, e);
+            return null;
+        }
+    }
+
+    /**
+     * Verifica si un elemento localizado está habilitado.
+     *
+     * @param locator localizador del elemento a verificar
+     * @return {@code true} si el elemento está habilitado, {@code false} si no se encuentra o ocurre un error
+     */
+    public boolean elementEnabled(By locator) {
+        try {
+            WebElement element = driver.findElement(locator);
+            Log.info("Verificando si el elemento está habilitado: " + locator);
+            return element.isEnabled();
+        } catch (NoSuchElementException | StaleElementReferenceException e) {
+            Log.warn("Elemento no encontrado o no disponible: " + locator);
+            return false;
+        } catch (Exception e) {
+            Log.error("Error al verificar si el elemento está habilitado: " + locator + " - " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Selecciona un valor en un elemento <select> usando el atributo "value".
+     *
+     * @param locator   localizador del elemento <select>
+     * @param selection valor a seleccionar
      */
     public void selectElementSelectByValue(By locator, String selection) {
-        Log.info(LogInfo.LOG_SELECT_DROPDOWNLIST_ELEMENT_BY_VALUE);
-        Select select = new Select(findElement(locator));
-        Log.info(select.getAllSelectedOptions().toString());
-        select.selectByValue(selection);
+        try {
+            WebElement element = findElement(locator);
+            validateElement(element, locator);
+            Log.info(LogInfo.LOG_SELECT_DROPDOWNLIST_ELEMENT_BY_VALUE + locator + ": " + selection);
+            Select select = new Select(element);
+            Log.info("Opciones actualmente seleccionadas: " + select.getAllSelectedOptions());
+            select.selectByValue(selection);
+        } catch (Exception e) {
+            handleFail(locator, "No se pudo seleccionar por valor '" + selection + "' en el elemento Select: " + locator, e);
+        }
     }
 
     /**
-     * Pausa la ejecución del programa durante 1 segundo.
-     * <p>
-     * Este método utiliza {@code Thread.sleep()} para suspender el
-     * hilo actual por 1000 milisegundos. En caso de que se interrumpa
-     * el hilo mientras está en espera, se captura la excepción
-     * {@link InterruptedException} y se imprime el stack trace.
+     * Pausa la ejecución del hilo actual durante el tiempo especificado.
+     *
+     * @param milliSeconds duración de la espera en milisegundos
      */
     public void threadWait(Long milliSeconds) {
         try {
-            Thread.sleep(milliSeconds); // Espera de 1 segundo
+            Thread.sleep(milliSeconds);
+            Log.info("Esperando " + milliSeconds + " milisegundos.");
         } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Envía un texto de entrada a un elemento web localizado por el localizador especificado.
-     * Este método registra el texto que se enviará y utiliza el localizador proporcionado
-     * para encontrar el elemento en el que se ingresará el texto.
-     *
-     * @param inputText el texto que se desea escribir en el elemento web.
-     * @param locator   el localizador del elemento web donde se ingresará el texto
-     *                  (por ejemplo, By.xpath, By.id, etc.).
-     */
-    public void sendInputText(String inputText, By locator) {
-        Log.info(LogInfo.LOG_TYPE_TEXT + inputText);
-        findElement(locator).sendKeys(inputText);
-    }
-
-    /**
-     * Envía texto de entrada a un elemento web y simula la acción de presionar la tecla Enter.
-     * Este método utiliza un localizador para identificar el elemento, registra información
-     * sobre las acciones realizadas y combina el envío del texto con la simulación de la tecla Enter.
-     *
-     * @param inputText el texto que se desea escribir en el elemento web.
-     * @param locator   el localizador del elemento web donde se ingresará el texto
-     *                  (por ejemplo, By.xpath, By.id, etc.).
-     */
-    public void sendInputTextAndKeyEnter(String inputText, By locator) {
-        //encontrarElemento(locator).sendKeys(inputText);
-        sendInputText(inputText, locator);
-        Log.info(LogInfo.LOG_TYPE_TEXT_AND_ENTER);
-        findElement(locator).sendKeys(Keys.ENTER);
-    }
-
-    /**
-     * Envía texto de entrada a un elemento web y simula la acción de presionar la tecla Abajo y luego
-     * la tecla Enter.
-     * Este método utiliza un localizador para identificar el elemento, registra información
-     * sobre las acciones realizadas y combina el envío del texto con la simulación de la tecla Enter.
-     *
-     * @param inputText el texto que se desea escribir en el elemento web.
-     * @param locator   el localizador del elemento web donde se ingresará el texto
-     *                  (por ejemplo, By.xpath, By.id, etc.).
-     */
-    public void sendInputTextAndKeysDownEnter(String inputText, By locator) {
-        //encontrarElemento(locator).sendKeys(inputText);
-        sendInputText(inputText, locator);
-        Log.info(LogInfo.LOG_TYPE_TEXT_AND_ENTER);
-        findElement(locator).sendKeys(Keys.DOWN);
-        findElement(locator).sendKeys(Keys.ENTER);
-    }
-
-    /**
-     * Limpia el contenido de un campo de texto ubicado por el localizador especificado.
-     * Este método registra información sobre el campo de texto y utiliza el localizador
-     * para encontrar el elemento correspondiente, eliminando cualquier texto presente en él.
-     *
-     * @param locator el localizador del campo de texto a limpiar
-     *                (por ejemplo, By.xpath, By.id, etc.).
-     */
-    public void clearText(By locator) {
-        Log.info(LogInfo.LOG_CLEAR_TEXT + locator);
-        findElement(locator).clear();
-    }
-
-    /**
-     * Selecciona y limpia todo el contenido de un campo de texto ubicado por el localizador especificado'.
-     * Este método registra información sobre el campo de texto y utiliza el localizador
-     * para encontrar el elemento correspondiente, eliminando cualquier texto presente en él.
-     *
-     * @param locator el localizador del campo de texto a limpiar
-     *                (por ejemplo, By.xpath, By.id, etc.).
-     */
-    public void selectAndClearAllText(By locator) {
-        findElement(locator).sendKeys(Keys.CONTROL, "a");
-        findElement(locator).sendKeys(Keys.BACK_SPACE);
-    }
-
-    /**
-     * Navega a una URL específica en el navegador controlado por WebDriver.
-     * Este método registra la información de la URL proporcionada y utiliza el controlador
-     * de WebDriver para cargar la página correspondiente.
-     *
-     * @param url la dirección URL de la página web que se desea visitar.
-     */
-    public void visitUrl(String url) {
-        Log.info(LogInfo.LOG_VISIT_URL + url);
-        this.driver.get(url);
-    }
-
-    /**
-     * Cierra y finaliza la sesión del navegador controlado por WebDriver.
-     * Este método registra información relevante sobre el navegador en uso
-     * y asegura que los recursos asociados al controlador sean liberados adecuadamente.
-     */
-    public void quitDriver() {
-        Log.info(LogInfo.LOG_QUIT + Base.browser);
-        Log.info(LogInfo.LOG_SEPARATE);
-        this.driver.quit();
-    }
-
-    /**
-     * Realiza un clic en un elemento web localizado por el localizador especificado.
-     * Este método registra información sobre el localizador proporcionado y busca
-     * el elemento web para ejecutar la acción de clic.
-     *
-     * @param locator el localizador del elemento web en el que se desea hacer clic
-     *                (por ejemplo, By.xpath, By.id, etc.).
-     */
-    public void clickLocator(By locator) {
-        Log.info(LogInfo.LOG_CLICK_LOCATOR + locator);
-        findElement(locator).click();
-    }
-
-    /**
-     * Realiza un clic en un elemento web especificado.
-     * Este método registra información sobre el elemento web proporcionado
-     * y ejecuta la acción de clic en él.
-     *
-     * @param webElement el elemento web en el que se desea hacer clic.
-     */
-    public void clickWebElement(WebElement webElement) {
-        Log.info(LogInfo.LOG_CLICK_ELEMENT + webElement);
-        webElement.click();
-    }
-
-    /**
-     * Navega por una página web simulando un desplazamiento vertical desde un punto inicial
-     * hasta un punto final, tomando capturas de pantalla en cada paso.
-     * Este método registra información al inicio y al final del proceso, y utiliza los puntos
-     * definidos para calcular los pasos de navegación y desplazarse automáticamente.
-     *
-     * @param start  el localizador del elemento web que define el punto inicial del desplazamiento.
-     * @param finish el localizador del elemento web que define el punto final del desplazamiento.
-     */
-    public void verticalWebNavigation(By start, By finish) throws IOException {
-        Log.info(LogInfo.LOG_VERTICAL_NAVIGATION);
-        int ini = getY(start);
-        int ter = getY(finish);
-
-        do {
-            navigate(0, ini);
-            screenShot();
-            ini += Data.DATA_NAVIGATE_Y;
-        }
-        while (ini <= ter);
-
-        Log.info(LogInfo.LOG_NAVIGATION_FINALIZED);
-    }
-
-    /**
-     * Realiza un desplazamiento en la página web con las coordenadas especificadas utilizando JavaScript.
-     * Este método registra información sobre las coordenadas de desplazamiento y ejecuta un script
-     * de JavaScript para mover la vista en la página.
-     *
-     * @param x la posición horizontal a la que se desea desplazarse.
-     * @param y la posición vertical a la que se desea desplazarse.
-     */
-    public void navigate(int x, int y) {
-        Log.info(LogInfo.LOG_NAVIGATE_TO_X_AND_Y + x + "/" + y);
-        JavascriptExecutor jse = (JavascriptExecutor) this.driver;
-        jse.executeScript("scroll(" + x + ", " + y + ");");
-    }
-
-    /**
-     * Obtiene la posición horizontal de un elemento web especificado por el localizador.
-     * Este método registra información sobre el elemento y utiliza su posición en la página para
-     * devolver la coordenada horizontal.
-     *
-     * @param locator el localizador del elemento web (por ejemplo, By.xpath, By.id, etc.).
-     * @return la coordenada X del elemento web encontrado.
-     */
-    public int getX(By locator) {
-        Log.info(LogInfo.LOG_GET_X);
-        WebElement element = findElement(locator);
-        Point classname = element.getLocation();
-        return classname.getX();
-    }
-
-    /**
-     * Obtiene la posición vertical de un elemento web especificado por el localizador.
-     * Este método registra información sobre el elemento y utiliza su posición en la página para
-     * devolver la coordenada vertical.
-     *
-     * @param locator el localizador del elemento web (por ejemplo, By.xpath, By.id, etc.).
-     * @return la coordenada Y del elemento web encontrado.
-     */
-    public int getY(By locator) {
-        Log.info(LogInfo.LOG_GET_Y);
-        WebElement element = findElement(locator);
-        Point classname = element.getLocation();
-        return classname.getY();
-    }
-
-    /**
-     * Realiza una captura de pantalla de la página actual y la almacena en una ubicación específica.
-     * Este método registra información sobre el inicio y fin del proceso de captura, crea las
-     * carpetas necesarias para almacenar la evidencia, y adjunta la captura de pantalla a un informe
-     * de Allure para propósitos de trazabilidad.
-     * En caso de errores, registra el error y marca la prueba como fallida.
-     */
-    public void screenShot2() {
-        Log.info(LogInfo.LOG_SCREENSHOT_TAKE);
-        File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        try {
-            Files.createDirectories(Paths.get(getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_EVIDENCES, ExternalData.ED_SOURCE) + generateFolderName()));
-
-            FileUtils.copyFileToDirectory(screenshot, new File(getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_EVIDENCES, ExternalData.ED_SOURCE) + generateFolderName()));
-            String name = screenshot.getName();
-            Log.info(LogInfo.LOG_SCREENSHOT_NAME + name);
-            InputStream is = Files.newInputStream(Paths.get(getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_EVIDENCES, ExternalData.ED_SOURCE) + generateFolderName() + "/" + name));
-            Log.info(LogInfo.LOG_SCREENSHOT_SAVED + getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION, ExternalData.ED_EVIDENCES, ExternalData.ED_SOURCE) + generateFolderName() + "/" + name);
-            Allure.attachment(Data.DATA_ALLURE_EVIDENCE + generateFolderName(), is);
-        } catch (Exception e) {
-            Log.error(e.toString());
-            fail(e.toString());
-        }
-    }
-
-    public void screenShot() throws IOException {
-        //Log.info(LogInfo.LOG_SCREENSHOT_TAKE);
-
-        File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        String folderName = generateFolderName();
-        String basePath = getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
-                ExternalData.ED_EVIDENCES,
-                ExternalData.ED_SOURCE);
-        Path targetDir = Paths.get(basePath + folderName);
-
-        try {
-            Files.createDirectories(targetDir);
-            FileUtils.copyFileToDirectory(screenshot, targetDir.toFile());
-
-            String name = screenshot.getName();
-            //Log.info(LogInfo.LOG_SCREENSHOT_NAME + name);
-
-            Path screenshotPath = targetDir.resolve(name);
-
-            try (InputStream is = Files.newInputStream(screenshotPath)) {
-                Log.info(LogInfo.LOG_SCREENSHOT_SAVED + screenshotPath);
-                Allure.attachment(Data.DATA_ALLURE_EVIDENCE + folderName, is);
-            } catch (NoSuchFileException nsfe) {
-                Log.error("No se encontró el archivo: " + screenshotPath);
-                fail("Archivo no encontrado para adjuntar: " + nsfe.getMessage());
-            }
-
-        } catch (Exception e) {
-            Log.error("Error al tomar screenshot: " + e.toString());
-            fail("Excepción general: " + e.toString());
-        }
-    }
-
-    /**
-     * Verifica si un elemento web especificado por el localizador está visible en la página.
-     * Este método registra información sobre el elemento proporcionado y maneja posibles
-     * excepciones, devolviendo false si ocurre algún error durante la verificación.
-     *
-     * @param locator el localizador del elemento web (por ejemplo, By.xpath, By.id, etc.).
-     * @return true si el elemento está visible, false en caso contrario o si ocurre una excepción.
-     */
-    public boolean elementDisplayedByLocator(By locator) {
-        try {
-            Log.info(LogInfo.LOG_ELEMENT_DISPLAYED + locator);
-            return findElement(locator).isDisplayed();
-        } catch (Exception e) {
-            Log.warn(e.toString());
-            return false;
-        }
-    }
-
-    public boolean elementIsVisibleByLocator(By locator) {
-        Log.info(LogInfo.LOG_ELEMENT_DISPLAYED + locator);
-        boolean visible = !findElements(locator).isEmpty() &&
-                findElement(locator).isDisplayed();
-        return visible;
-    }
-
-    /**
-     * Verifica si un elemento web está visible en la página.
-     * Este método registra información sobre el elemento proporcionado y maneja posibles excepciones.
-     * Si ocurre un error durante la verificación, se registra el error y la prueba se marca como fallida.
-     *
-     * @param element el elemento web que se desea verificar.
-     * @return true si el elemento está visible; false si ocurre una excepción.
-     */
-    public boolean elementDisplayedByWebElement(WebElement element) {
-        try {
-            Log.info(LogInfo.LOG_ELEMENT_DISPLAYED + element);
-            return element.isDisplayed();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    /**
-     * Espera a que un elemento web especificado por el localizador esté disponible para ser clicado.
-     * Este método utiliza una espera explícita para verificar la disponibilidad del elemento,
-     * realiza múltiples intentos en caso de excepciones, y toma capturas de pantalla durante el proceso
-     * para asegurar trazabilidad. En caso de error, registra los detalles y marca la prueba como fallida.
-     *
-     * @param locator el localizador del elemento web que se espera que sea clicable
-     *                (por ejemplo, By.xpath, By.id, etc.).
-     */
-    public void waitForElementToBeClickable(By locator) throws IOException {
-        final int MAX_ATTEMPTS = 2;
-        final int TIMEOUT_SECONDS = 15;
-
-        Log.info(LogInfo.LOG_WAIT_FOR_ELEMENT_TO_BE_CLICKABLE + locator);
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(TIMEOUT_SECONDS));
-
-        int attempts = 0;
-
-        while (attempts < MAX_ATTEMPTS) {
-            try {
-                WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
-
-                element.click();
-                Log.info(LogInfo.LOG_ELEMENT_CLICKED + (attempts + 1));
-                return;
-            } catch (StaleElementReferenceException | ElementClickInterceptedException | TimeoutException e) {
-                Log.warn(LogInfo.LOG_ERROR_ELEMENT_CLICKED + (attempts + 1));
-            }
-
-            attempts++;
-            waitShortBetweenAttempts();
-        }
-
-        Log.error(LogInfo.LOG_ERROR_CANNOT_CLICK_ELEMENT + locator);
-        screenShot();
-        fail(Mensajes.MENSAJE_ERROR_ELEMENTO_NO_CLICKEABLE + locator);
-    }
-
-    private void waitShortBetweenAttempts() {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
+            Log.error("Thread interrumpido durante la espera: " + e.getMessage());
             Thread.currentThread().interrupt();
         }
     }
 
     /**
-     * Espera a que un elemento web especificado por el localizador esté disponible para ser clicado
-     * utilizando javascript.
-     * Este método utiliza una espera explícita para verificar la disponibilidad del elemento,
-     * realiza múltiples intentos en caso de excepciones, y toma capturas de pantalla durante el proceso
-     * para asegurar trazabilidad. En caso de error, registra los detalles y marca la prueba como fallida.
+     * Envía texto a un elemento de entrada (input) localizado en la página.
      *
-     * @param locator el localizador del elemento web que se espera que sea clicable
-     *                (por ejemplo, By.xpath, By.id, etc.).
+     * @param inputText texto a enviar
+     * @param locator   localizador del elemento de entrada
+     */
+    public void sendInputText(String inputText, By locator) {
+        try {
+            WebElement element = findElement(locator);
+            validateElement(element, locator);
+            Log.info(LogInfo.LOG_TYPE_TEXT +  inputText);
+            element.clear();
+            element.sendKeys(inputText);
+        } catch (Exception e) {
+            handleFail(locator, "No se pudo enviar texto '" + inputText + "' al elemento: " + locator, e);
+        }
+    }
+
+    /**
+     * Envía texto a un elemento de entrada (input) y presiona la tecla Enter.
+     *
+     * @param inputText texto a enviar
+     * @param locator   localizador del elemento de entrada
+     */
+    public void sendInputTextAndKeyEnter(String inputText, By locator) {
+        try {
+            WebElement element = findElement(locator);
+            validateElement(element, locator);
+            Log.info(LogInfo.LOG_TYPE_TEXT + "Enviando texto: '" + inputText + "' y presionando Enter al elemento: " + locator);
+            element.clear();
+            element.sendKeys(inputText, Keys.ENTER);
+        } catch (Exception e) {
+            handleFail(locator, "No se pudo enviar texto '" + inputText + "' y presionar Enter en el elemento: " + locator, e);
+        }
+    }
+
+    /**
+     * Envía texto a un elemento de entrada (input), presiona Enter, luego la tecla Down y nuevamente Enter.
+     *
+     * @param inputText texto a enviar
+     * @param locator   localizador del elemento de entrada
+     */
+    public void sendInputTextAndKeysDownEnter(String inputText, By locator) {
+        WebElement element = findElement(locator);
+        validateElement(element, locator);
+        element.clear();
+        element.sendKeys(inputText, Keys.ENTER);
+        Log.info(LogInfo.LOG_TYPE_TEXT_AND_ENTER);
+        element.sendKeys(Keys.DOWN);
+        element.sendKeys(Keys.ENTER);
+    }
+
+    /**
+     * Limpia el texto de un elemento de entrada (input) localizado en la página.
+     *
+     * @param locator localizador del elemento de entrada
+     */
+    public void clearText(By locator) {
+        try {
+            WebElement element = findElement(locator);
+            validateElement(element, locator);
+            Log.info(LogInfo.LOG_CLEAR_TEXT + " Limpiando el texto del elemento: " + locator);
+            element.clear();
+        } catch (Exception e) {
+            handleFail(locator, "No se pudo limpiar el texto del elemento: " + locator, e);
+        }
+    }
+
+    /**
+     * Selecciona todo el texto de un elemento de entrada (input) y lo borra.
+     *
+     * @param locator localizador del elemento de entrada
+     */
+    public void selectAndClearAllText(By locator) {
+        try {
+            WebElement element = findElement(locator);
+            validateElement(element, locator);
+            Log.info("Seleccionando todo el texto y borrando el contenido del elemento: " + locator);
+            element.sendKeys(Keys.CONTROL, "a");
+            element.sendKeys(Keys.BACK_SPACE);
+        } catch (Exception e) {
+            handleFail(locator, "No se pudo seleccionar y borrar todo el texto del elemento: " + locator, e);
+        }
+    }
+
+    /**
+     * Navega a la URL correspondiente según el entorno especificado.
+     *
+     * @param environment nombre del entorno (por ejemplo, "DEV", "QA", "PROD")
+     */
+    public void visitUrlIndex(String environment) {
+        try {
+            String key = switch (environment) {
+                case Data.DATA_ENV_DEV -> ExternalData_Auto.ED_URL_DEV;
+                case Data.DATA_ENV_PROD -> ExternalData_Auto.ED_URL_PROD;
+                default -> ExternalData_Auto.ED_URL_QA;
+            };
+
+            String url = getJsonString(ExternalData_Auto.ED_OBJECT_URLS, key, ExternalData_Auto.ED_SRC);
+            Log.info(LogInfo.LOG_VISIT_URL + url);
+            driver.get(url);
+        } catch (Exception e) {
+            handleFail(null, "No se pudo visitar la URL para el entorno: " + environment, e);
+        }
+    }
+
+    /**
+     * Navega a la URL especificada.
+     *
+     * @param url dirección web a visitar
+     */
+    public void visitUrl(String url) {
+        try {
+            Log.info(LogInfo.LOG_VISIT_URL + url);
+            driver.get(url);
+        } catch (Exception e) {
+            handleFail(null, "No se pudo visitar la URL: " + url, e);
+        }
+    }
+
+    /**
+     * Cierra la instancia actual de WebDriver si existe y libera los recursos.
+     */
+    public void quitDriver() {
+        Log.info(LogInfo.LOG_QUIT + Base.browser);
+        Log.info(LogInfo.LOG_SEPARATE);
+        try {
+            if (driver != null) {
+                driver.quit();
+                driver = null;
+                Log.info("WebDriver cerrado correctamente.");
+            }
+        } catch (Exception e) {
+            Log.error("Error al cerrar WebDriver: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Hace clic en un elemento localizado en la página.
+     *
+     * @param locator localizador del elemento a hacer clic
+     */
+    public void clickLocator(By locator) {
+        try {
+            WebElement element = findElement(locator);
+            validateElement(element, locator);
+            Log.info(LogInfo.LOG_CLICK_LOCATOR + " Haciendo click en el elemento: " + locator);
+            element.click();
+        } catch (Exception e) {
+            handleFail(locator, "No se pudo hacer click en el elemento: " + locator, e);
+        }
+    }
+
+    /**
+     * Hace clic en un WebElement dado.
+     *
+     * @param webElement elemento WebElement sobre el que se realizará el clic
+     */
+    public void clickWebElement(WebElement webElement) {
+        try {
+            validateElement(webElement, null);
+            Log.info(LogInfo.LOG_CLICK_ELEMENT + " Haciendo click en el elemento: " + webElement);
+            webElement.click();
+        } catch (Exception e) {
+            handleFail(null, "No se pudo hacer click en el WebElement: " + webElement, e);
+        }
+    }
+
+    /**
+     * Realiza una navegación vertical desde un elemento de inicio hasta un elemento de destino,
+     * tomando capturas de pantalla en cada paso del recorrido.
+     *
+     * @param start  localizador del elemento de inicio
+     * @param finish localizador del elemento de destino
+     */
+    public void verticalWebNavigation(By start, By finish) {
+        try {
+            WebElement startElement = findElement(start);
+            WebElement finishElement = findElement(finish);
+            validateElement(startElement, start);
+            validateElement(finishElement, finish);
+
+            Log.info(LogInfo.LOG_VERTICAL_NAVIGATION);
+
+            int ini = getY(start);
+            int ter = getY(finish);
+
+            while (ini <= ter) {
+                navigate(0, ini);
+                screenShot();
+                ini += Data.DATA_NAVIGATE_Y;
+            }
+
+            Log.info(LogInfo.LOG_NAVIGATION_FINALIZED);
+        } catch (Exception e) {
+            handleFail(null, "Error durante la navegación vertical entre los elementos: "
+                    + start + " y " + finish, e);
+        }
+    }
+
+    /**
+     * Realiza un desplazamiento (scroll) a las coordenadas X e Y especificadas en la página.
+     *
+     * @param x coordenada horizontal
+     * @param y coordenada vertical
+     */
+    public void navigate(int x, int y) {
+        try {
+            Log.info(LogInfo.LOG_NAVIGATE_TO_X_AND_Y + x + "/" + y);
+            JavascriptExecutor jse = (JavascriptExecutor) driver;
+            jse.executeScript("scroll(" + x + ", " + y + ");");
+        } catch (Exception e) {
+            handleFail(null, "Error al navegar a la posición X/Y: " + x + "/" + y, e);
+        }
+    }
+
+    /**
+     * Obtiene la coordenada X de un elemento localizado en la página.
+     *
+     * @param locator localizador del elemento
+     * @return coordenada X del elemento, o -1 si ocurre un error
+     */
+    public int getX(By locator) {
+        try {
+            WebElement element = findElement(locator);
+            validateElement(element, locator);
+            Log.info(LogInfo.LOG_GET_X + " del elemento: " + locator);
+            Point location = element.getLocation();
+            return location.getX();
+        } catch (Exception e) {
+            handleFail(locator, "No se pudo obtener la coordenada X del elemento: " + locator, e);
+            return -1; // Retorno seguro en caso de fallo
+        }
+    }
+
+    /**
+     * Obtiene la coordenada Y de un elemento localizado en la página.
+     *
+     * @param locator localizador del elemento
+     * @return coordenada Y del elemento, o -1 si ocurre un error
+     */
+    public int getY(By locator) {
+        try {
+            WebElement element = findElement(locator);
+            validateElement(element, locator);
+            Log.info(LogInfo.LOG_GET_Y + " del elemento: " + locator);
+            Point location = element.getLocation();
+            return location.getY();
+        } catch (Exception e) {
+            handleFail(locator, "No se pudo obtener la coordenada Y del elemento: " + locator, e);
+            return -1; // Retorno seguro en caso de fallo
+        }
+    }
+
+    /**
+     * Toma una captura de pantalla de la página actual, la guarda en la carpeta de evidencias
+     * y la adjunta a Allure para reportes.
+     */
+    public void screenShot() {
+        try {
+            File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            String folderName = generateFolderName();
+            String basePath = getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
+                    ExternalData.ED_EVIDENCES,
+                    ExternalData.ED_SOURCE);
+            Path targetDir = Paths.get(basePath + folderName);
+
+            Files.createDirectories(targetDir);
+            FileUtils.copyFileToDirectory(screenshot, targetDir.toFile());
+
+            Path screenshotPath = targetDir.resolve(screenshot.getName());
+            try (InputStream is = Files.newInputStream(screenshotPath)) {
+                Log.info(LogInfo.LOG_SCREENSHOT_SAVED + screenshotPath);
+                Allure.attachment(Data.DATA_ALLURE_EVIDENCE + folderName, is);
+            } catch (NoSuchFileException nsfe) {
+                handleFailNoScreenshot(null, "No se encontró el archivo: " + screenshotPath, nsfe);
+            }
+        } catch (Exception e) {
+            handleFailNoScreenshot(null, "Error al tomar screenshot: " + e.toString(), e);
+        }
+    }
+
+    /**
+     * Verifica si un elemento localizado es visible en la página.
+     *
+     * @param locator localizador del elemento
+     * @return true si el elemento es visible, false si no lo es o si ocurre un timeout
+     */
+    public boolean elementDisplayedByLocator(By locator) {
+        try {
+            Log.info(LogInfo.LOG_ELEMENT_DISPLAYED + locator);
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            return wait.until(driver -> {
+                try {
+                    WebElement element = driver.findElement(locator);
+                    return element.isDisplayed();
+                } catch (NoSuchElementException | StaleElementReferenceException e) {
+                    return false; // sigue esperando
+                }
+            });
+        } catch (TimeoutException e) {
+            Log.warn("Elemento no visible tras 10 segundos: " + locator);
+            return false;
+        }
+    }
+
+    /**
+     * Comprueba si un elemento localizado es visible dentro de un tiempo de espera.
+     *
+     * @param locator localizador del elemento
+     * @return true si el elemento se vuelve visible, false si no lo es o si ocurre un error
+     */
+    public boolean elementIsVisibleByLocator(By locator) {
+        Log.info(LogInfo.LOG_ELEMENT_DISPLAYED + locator);
+
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            boolean visible = element.isDisplayed();
+            Log.info(LogInfo.LOG_ELEMENT_DISPLAYED + locator + " - Visible: " + visible);
+            return visible;
+        } catch (TimeoutException e) {
+            Log.info("Elemento no visible dentro de 10 segundos: " + locator);
+            return false;
+        } catch (Exception e) {
+            Log.warn("Error comprobando visibilidad de " + locator + ": " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Verifica si un WebElement dado es visible en la página.
+     *
+     * @param element elemento a verificar
+     * @return true si el elemento es visible, false si no lo es o ocurre un error
+     */
+    public boolean elementDisplayedByWebElement(WebElement element) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            wait.until(ExpectedConditions.visibilityOf(element));
+            Log.info("Elemento visible: " + element);
+            return element.isDisplayed();
+        } catch (TimeoutException e) {
+            Log.warn("Elemento no visible tras 10 segundos: " + element);
+            return false;
+        } catch (StaleElementReferenceException e) {
+            Log.warn("Elemento stale: " + element);
+            return false;
+        } catch (Exception e) {
+            Log.error("Error inesperado al verificar visibilidad: " + element + " - " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Espera a que un elemento sea clickeable, manejando overlays y reintentos en caso de
+     * elementos obsoletos o interceptados, y realiza un click sobre él.
+     *
+     * @param locator localizador del elemento a clicar
+     */
+    public void waitForElementToBeClickable(By locator) {
+        final int MAX_ATTEMPTS = 2;
+        final int TIMEOUT_FIRST = 8;   // Tiempo máximo primer intento
+        final int TIMEOUT_RETRY = 3;   // Tiempo máximo reintento
+
+        Log.info("Intentando hacer clic en: " + locator);
+
+        for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+            try {
+                // Verificar overlay
+                if (isOverlayPresent()) {
+                    waitForOverlayToDisappear();
+                }
+
+                // Espera explícita dependiendo del intento
+                int timeout = (attempt == 1) ? TIMEOUT_FIRST : TIMEOUT_RETRY;
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
+
+                // Espera que el elemento sea clickeable y recaptura si stale
+                WebElement element = wait.until(ExpectedConditions.refreshed(
+                        ExpectedConditions.elementToBeClickable(locator)
+                ));
+
+                // Scroll hasta el elemento visible
+                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block:'center'});", element);
+
+                // Click normal
+                element.click();
+                Log.info("Clic realizado correctamente en intento: " + attempt);
+                return;
+
+            } catch (StaleElementReferenceException e) {
+                Log.warn("Elemento obsoleto, recapturando... Intento " + attempt);
+            } catch (ElementClickInterceptedException e) {
+                Log.warn("Elemento interceptado, reintentando... Intento " + attempt);
+            } catch (TimeoutException e) {
+                Log.warn("Timeout esperando elemento clickeable: " + locator + " Intento " + attempt);
+            } catch (Exception e) {
+                Log.error("Error inesperado al hacer clic en: " + locator + " → " + e.getMessage());
+            }
+        }
+
+        // Último recurso: click mediante JavaScript
+        try {
+            WebElement element = findElement(locator);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+            Log.warn("Clic mediante JavaScript como último recurso en: " + locator);
+        } catch (Exception jsEx) {
+            handleFail(locator, "Elemento no clickeable: " + locator, jsEx);
+        }
+    }
+
+    /**
+     * Verifica si hay un overlay o loader visible en la página.
+     *
+     * @return true si hay un overlay visible, false en caso contrario
+     */
+    public boolean isOverlayPresent() {
+        try {
+            // Selector del overlay/loader de tu aplicación
+            By overlayLocator = By.cssSelector(".overlay, .loader, .MuiBackdrop-root");
+
+            List<WebElement> overlays = driver.findElements(overlayLocator);
+            for (WebElement overlay : overlays) {
+                if (overlay.isDisplayed()) {
+                    return true; // Hay overlay visible
+                }
+            }
+            return false; // No hay overlay
+        } catch (Exception e) {
+            return false; // En caso de error, asumimos que no hay overlay
+        }
+    }
+
+    /**
+     * Realiza una pausa corta de 2 segundos entre intentos de acciones repetidas.
+     */
+    private void waitShortBetweenAttempts() {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            Log.warn("Thread interrumpido durante la espera corta entre intentos.");
+        }
+    }
+
+    /**
+     * Espera a que un elemento sea clickeable y realiza el clic.
+     * <p>
+     * Si el clic falla debido a StaleElementReference, ElementClickIntercepted o Timeout,
+     * reintenta hasta un máximo de 2 intentos. Si sigue fallando, realiza el clic mediante JavaScript.
+     *
+     * @param locator El {@link By} que identifica el elemento a hacer clic.
      */
     public void waitForElementToBeClickableJavascript(By locator) {
         final int MAX_ATTEMPTS = 2;
         final int TIMEOUT_SECONDS = 15;
 
-        Log.info(LogInfo.LOG_WAIT_FOR_ELEMENT_TO_BE_CLICKABLE + locator);
+        Log.info(LogInfo.LOG_WAIT_FOR_ELEMENT_TO_BE_CLICKABLE + " Elemento: " + locator);
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(TIMEOUT_SECONDS));
 
-        int attempts = 0;
-
-        while (attempts < MAX_ATTEMPTS) {
+        for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
             try {
                 WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
-
+                validateElement(element, locator);
                 element.click();
-                Log.info(LogInfo.LOG_ELEMENT_CLICKED + (attempts + 1));
+                Log.info(LogInfo.LOG_ELEMENT_CLICKED + " Intento: " + attempt);
+                return;
 
             } catch (StaleElementReferenceException | ElementClickInterceptedException | TimeoutException e) {
-                Log.warn(LogInfo.LOG_ERROR_ELEMENT_CLICKED + (attempts + 1));
+                Log.warn("Error al hacer clic en el elemento. Intento " + attempt + " → " + e.getMessage());
+            } catch (Exception e) {
+                Log.error("Error inesperado en waitForElementToBeClickableJavascript → " + e.getMessage());
             }
 
-            attempts++;
             waitShortBetweenAttempts();
         }
 
-        Log.error(LogInfo.LOG_ERROR_CANNOT_CLICK_ELEMENT + locator);
-        fail(Mensajes.MENSAJE_ERROR_ELEMENTO_NO_CLICKEABLE + locator);
+        try {
+            WebElement element = findElement(locator);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+            Log.warn("Clic mediante JavaScript como último recurso en: " + locator);
+        } catch (Exception jsEx) {
+            handleFail(locator, Mensajes.MENSAJE_ERROR_ELEMENTO_NO_CLICKEABLE + locator, jsEx);
+        }
     }
 
     /**
-     * Espera a que un elemento web especificado por el localizador sea visible en la página.
-     * Este método utiliza una espera fluida (FluentWait) para controlar la visibilidad del elemento,
-     * realiza múltiples intentos en caso de excepciones y toma capturas de pantalla como evidencia del proceso.
-     * En caso de error, registra los detalles y marca la prueba como fallida.
+     * Espera a que un elemento sea visible en la página web y lo valida.
+     * <p>
+     * Utiliza {@link FluentWait} con polling para reintentos y maneja elementos obsoletos (stale) hasta 3 intentos.
+     * Si no se vuelve visible después de los intentos, registra un fallo.
      *
-     * @param locator el localizador del elemento web que se espera que sea visible
-     *                (por ejemplo, By.xpath, By.id, etc.).
+     * @param locator El {@link By} que identifica el elemento a esperar.
+     * @throws IOException Si ocurre un error de E/S durante la espera o validación.
      */
     public void waitForVisibilityOfElementLocated(By locator) throws IOException {
         Log.info(LogInfo.LOG_WAIT_FOR_ELEMENT_TO_BE_CLICKABLE + locator);
+
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(Data.DATA_TIME_OUT))
                 .pollingEvery(Duration.ofSeconds(Data.DATA_EVALUATED_TIME))
                 .ignoring(NoSuchElementException.class);
 
-        int attempts = 0;
-        while (attempts < 3) {
+        final int MAX_ATTEMPTS = 3;
+
+        for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
             try {
                 WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+                validateElement(element, locator);
 
                 if (elementDisplayedByWebElement(element)) {
                     implicitWait(10);
-                    
-                    break;
+                    Log.info("Elemento visible y validado en intento " + attempt);
+                    return;
                 }
+
             } catch (StaleElementReferenceException e) {
-                attempts++;
-                Log.warn(Mensajes.MENSAJE_INTENTOS + attempts);
+                Log.warn(Mensajes.MENSAJE_INTENTOS + attempt);
             } catch (TimeoutException e) {
-                Log.error(e.getMessage());
-                screenShot();
-                fail(e.getMessage());
+                handleFail(locator, "Timeout esperando visibilidad del elemento: " + locator, e);
             } catch (Exception e) {
-                Log.error(e.getMessage());
-                screenShot();
-                fail(e.getMessage());
+                handleFail(locator, "Error inesperado esperando visibilidad del elemento: " + locator, e);
             }
+
+            waitShortBetweenAttempts();
         }
+
+        handleFail(locator, "No se pudo validar la visibilidad del elemento después de varios intentos: " + locator, null);
     }
 
     /**
-     * Espera a que un elemento dinámico en una lista sea clicable y realiza la acción de clic.
-     * Este método utiliza un localizador para identificar un elemento dinámico, localiza su ID
-     * y construye selectores dinámicos para encontrar la lista y la opción específica.
-     * Realiza múltiples intentos en caso de excepciones, toma capturas de pantalla durante el proceso
-     * y utiliza JavaScript para garantizar la visibilidad del elemento antes de hacer clic.
-     * En caso de error, registra los detalles y marca la prueba como fallida.
+     * Espera y hace clic en un elemento dinámico dentro de una lista asociada a un elemento padre.
+     * <p>
+     * Primero obtiene el ID del elemento base y construye localizadores dinámicos para la lista y la opción deseada.
+     * Utiliza {@link FluentWait} para esperar visibilidad y maneja intentos múltiples ante elementos obsoletos (stale).
+     * Si no se logra hacer clic tras varios intentos, se registra un fallo.
      *
-     * @param locator     el localizador del elemento inicial utilizado para identificar la lista dinámica.
-     * @param optionValue el identificador de la opción específica dentro de la lista dinámica que se desea seleccionar.
+     * @param locator     El {@link By} que identifica el elemento padre de la lista dinámica.
+     * @param optionValue El valor de la opción dentro de la lista dinámica que se desea seleccionar.
+     * @throws IOException Si ocurre un error durante la espera o validación de los elementos.
      */
     public void waitForDinamicElementFromListToBeClickable(By locator, String optionValue) throws IOException {
         Log.info(LogInfo.LOG_WAIT_FOR_ELEMENT_TO_BE_CLICKABLE);
+
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(Data.DATA_TIME_OUT))
                 .pollingEvery(Duration.ofSeconds(Data.DATA_EVALUATED_TIME))
                 .ignoring(NoSuchElementException.class);
 
         WebElement element = findElement(locator);
+        validateElement(element, locator);
+
         String elementID = element.getDomAttribute(Data.DATA_ID);
         Log.info(LogInfo.LOG_DYNAMIC_ELEMENT_ID_OBTAINED + elementID);
 
-        By list = getDinamicElement(elementID, Data.DATA_LISTBOX);
+        By listLocator = getDinamicElementByID(elementID, Data.DATA_LISTBOX);
+        Log.info(LogInfo.LOG_DYNAMIC_LIST_BOX_ID + listLocator);
 
-        Log.info(LogInfo.LOG_DYNAMIC_LIST_BOX_ID + list);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(listLocator));
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(list));
-
-        Log.info(LogInfo.LOG_WAIT_FOR_ELEMENT_TO_BE_CLICKABLE);
-
-        int attempts = 0;
-        while (attempts < 5) {
+        final int MAX_ATTEMPTS = 3;
+        for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
             try {
-                By option = getDinamicElement(elementID, optionValue);
-                WebElement firstOption = findElement(option);
-                Log.info(LogInfo.LOG_DYNAMIC_OPTION + option);
-                ((JavascriptExecutor) this.driver).executeScript(Data.DATA_SCROLL_INTO_VIEW_TRUE_JS, firstOption);
+                By optionLocator = getDinamicElementByID(elementID, optionValue);
+                WebElement optionElement = findElement(optionLocator);
+                validateElement(optionElement, optionLocator);
 
-                javascriptClickToWebElement(firstOption);
-                break;
+                Log.info(LogInfo.LOG_DYNAMIC_OPTION + optionLocator);
+                ((JavascriptExecutor) driver).executeScript(Data.DATA_SCROLL_INTO_VIEW_TRUE_JS, optionElement);
+                javascriptClickToWebElement(optionElement);
+
+                Log.info("Elemento dinámico clickeado exitosamente en intento " + attempt);
+                return;
+
             } catch (StaleElementReferenceException e) {
-                attempts++;
-                Log.warn(Mensajes.MENSAJE_INTENTOS + attempts);
+                Log.warn(Mensajes.MENSAJE_INTENTOS + attempt);
             } catch (Exception e) {
-                Log.error(e.getMessage());
-                screenShot();
-                fail(e.getMessage());
+                handleFail(locator, "Error al hacer clic en opción dinámica: " + optionValue, e);
             }
+
+            waitShortBetweenAttempts();
         }
+
+        handleFail(locator, "No se pudo hacer clic en la opción dinámica después de varios intentos: " + optionValue, null);
     }
 
     /**
-     * Genera un localizador dinámico basado en un identificador único y un tipo específico.
-     * Este método concatena el identificador proporcionado con el tipo especificado para
-     * construir y devolver un objeto de tipo `By` que localiza el elemento web correspondiente.
+     * Construye un localizador dinámico {@link By} a partir de un ID base y un sufijo o tipo.
      *
-     * @param id   el identificador único del elemento base.
-     * @param tipo el tipo que se combinará con el identificador para construir el localizador.
-     * @return un objeto `By` que representa el localizador dinámico del elemento.
+     * @param id   El ID base del elemento.
+     * @param tipo El sufijo o tipo que se concatena al ID para formar el ID final.
+     * @return Un objeto {@link By} que permite localizar el elemento dinámico por su ID completo.
      */
-    public By getDinamicElement(String id, String tipo) {
+    public By getDinamicElementByID(String id, String tipo) {
         return By.id(id + tipo);
     }
 
     /**
-     * Configura una espera implícita para el controlador de WebDriver.
-     * Este método registra información sobre el tiempo de espera configurado y establece
-     * el tiempo máximo que WebDriver esperará para encontrar un elemento antes de lanzar una excepción.
+     * Construye un localizador dinámico {@link By} a partir de un ID base, un sufijo y un método de localización.
      *
-     * @param time el tiempo de espera en segundos.
+     * @param id     El ID base del elemento.
+     * @param tipo   El sufijo o tipo que se concatena al ID para formar el selector final.
+     * @param method El método de localización a utilizar ("id", "xpath", "css").
+     * @return Un objeto {@link By} que permite localizar el elemento dinámico según el método especificado.
+     * @throws IllegalArgumentException Si se proporciona un método no soportado.
+     */
+    public By getDinamicElementByMethod(String id, String tipo, String method) {
+        switch (method.toLowerCase()) {
+            case "id":
+                return By.id(id + tipo);
+            case "xpath":
+                return By.xpath(id + tipo);
+            case "css":
+                return By.cssSelector(id + tipo);
+            default:
+                throw new IllegalArgumentException("Método no soportado: " + method);
+        }
+    }
+
+    /**
+     * Configura un tiempo de espera implícito para la búsqueda de elementos en el {@link WebDriver}.
+     *
+     * @param time El tiempo en segundos que el driver esperará al buscar elementos antes de lanzar {@link NoSuchElementException}.
      */
     public void implicitWait(long time) {
         this.driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(time));
     }
 
     /**
-     * Busca un elemento web desplazándose verticalmente dentro de un rango definido por dos elementos.
-     * Este método utiliza coordenadas obtenidas de los elementos inicial y final para navegar por la página.
-     * Detiene la búsqueda cuando encuentra el elemento o alcanza el límite especificado.
-     * Después de localizar el elemento, espera a que sea clicable.
+     * Busca un elemento realizando una navegación vertical entre dos elementos de referencia y hace scroll hasta él.
      *
-     * @param element el localizador del elemento web que se desea buscar.
-     * @param start   el localizador del elemento que define el punto inicial del rango de búsqueda.
-     * @param finish  el localizador del elemento que define el punto final del rango de búsqueda.
+     * @param element El {@link By} del elemento que se desea encontrar.
+     * @param start   El {@link By} del elemento de inicio para la navegación vertical.
+     * @param finish  El {@link By} del elemento final que limita la navegación vertical.
+     * @throws IOException Si ocurre un error durante la búsqueda o al interactuar con el elemento.
      */
     public void searchElementByCoordinates(By element, By start, By finish) throws IOException {
         Log.info(LogInfo.LOG_SEARCH_FOR_ELEMENT_WITH_VERTICAL_NAVIGATION + element);
-        int startElement = getY(start);
-        int finishElement = getY(finish);
+        int startY = getY(start);
+        int finishY = getY(finish);
+        boolean searching = true;
 
-        boolean search = true;
-
-        do {
+        while (searching) {
             if (elementDisplayedByLocator(element)) {
-                search = false;
+                searching = false;
                 navigate(0, getY(element));
+                break;
             }
 
-            if (startElement >= finishElement) {
-                search = false;
+            if (startY >= finishY) {
+                searching = false;
+                break;
             }
 
-            navigate(0, startElement);
-            startElement += Data.DATA_NAVIGATE_Y;
+            navigate(0, startY);
+            startY += Data.DATA_NAVIGATE_Y;
         }
-        while (search);
 
         waitForElementToBeClickable(element);
     }
 
     /**
-     * Realiza la búsqueda de un elemento web desplazándose verticalmente en la página.
-     * Este método utiliza las coordenadas inicial y final del elemento para navegar de manera incremental,
-     * verificando su visibilidad en cada paso. Detiene la búsqueda cuando encuentra el elemento y realiza un
-     * click en el elemento o detiene la busqueda al alcanzar los límites establecidos.
+     * Busca un elemento realizando scroll vertical de manera incremental hasta un límite máximo y lo interactúa.
+     * Si no se encuentra dentro del rango definido, toma un screenshot y falla la ejecución.
      *
-     * @param element el localizador del elemento web que se desea buscar.
+     * @param element El {@link By} del elemento que se desea buscar e interactuar.
+     * @throws IOException Si ocurre un error durante la búsqueda, el scroll o la interacción con el elemento.
      */
     public void searchElement(By element) throws IOException {
         Log.info(LogInfo.LOG_SEARCH_FOR_ELEMENT_WITH_VERTICAL_NAVIGATION + element);
-        int ini = getY(element);
-        int ter = getY(element);
 
-        boolean search = true;
+        int startY = 0;
+        int maxY = 2000;
 
-        do {
+        boolean searching = true;
+
+        while (searching) {
             if (elementDisplayedByLocator(element)) {
-                search = false;
+                searching = false;
                 navigate(0, getY(element));
+                break;
             }
 
-            if (ini >= ter) {
-                search = false;
+            if (startY >= maxY) {
+                searching = false;
+                Log.warn("Elemento no encontrado dentro del rango de scroll: " + element);
+                screenShot();
+                fail("No se pudo localizar el elemento: " + element);
             }
 
-            navigate(0, ini);
-            ini += Data.DATA_NAVIGATE_Y;
+            navigate(0, startY);
+            startY += Data.DATA_NAVIGATE_Y;
         }
-        while (search);
 
         waitForElementToBeClickable(element);
         javascriptClickToLocator(element);
     }
 
     /**
-     * Realiza un clic en un elemento web utilizando JavaScript.
-     * Este método registra información sobre el localizador proporcionado y utiliza un
-     * script de JavaScript para ejecutar la acción de clic en el elemento especificado.
+     * Realiza un clic sobre un elemento utilizando JavaScript.
+     * Si el elemento no es visible, toma un screenshot y falla la ejecución.
      *
-     * @param locator el localizador del elemento web en el que se desea hacer clic
-     *                (por ejemplo, By.xpath, By.id, etc.).
+     * @param locator El {@link By} del elemento sobre el cual se realizará el clic.
+     * @throws IOException Si ocurre un error al localizar el elemento o al interactuar con él mediante JavaScript.
      */
-    public void javascriptClickToLocator(By locator) {
+    public void javascriptClickToLocator(By locator) throws IOException {
         Log.info(LogInfo.LOG_CLICK_WITH_JAVASCRIPT + locator);
-        JavascriptExecutor jse = (JavascriptExecutor) this.driver;
-        jse.executeScript(Data.DATA_CLICK_JS, findElement(locator));
+        try {
+            WebElement element = findElement(locator);
+            if (elementDisplayedByWebElement(element)) {
+                ((JavascriptExecutor) driver).executeScript(Data.DATA_CLICK_JS, element);
+                Log.info("Clic realizado con JavaScript: " + locator);
+            } else {
+                screenShot();
+                fail("Elemento no visible para clic con JavaScript: " + locator);
+            }
+        } catch (Exception e) {
+            screenShot();
+            Log.error("Error al hacer clic con JavaScript en: " + locator + " → " + e.getMessage());
+            fail(e.getMessage());
+        }
     }
 
     /**
-     * Realiza un clic en un elemento web utilizando JavaScript.
-     * Este método registra información sobre el elemento proporcionado y utiliza un
-     * script de JavaScript para ejecutar la acción de clic en dicho elemento.
+     * Realiza un clic sobre un {@link WebElement} utilizando JavaScript.
+     * Si el elemento es nulo o no está visible, toma un screenshot y falla la ejecución.
      *
-     * @param element el elemento web en el que se desea hacer clic.
+     * @param element El {@link WebElement} sobre el cual se realizará el clic.
+     * @throws IOException Si ocurre un error al interactuar con el elemento mediante JavaScript.
      */
-    public void javascriptClickToWebElement(WebElement element) {
+    public void javascriptClickToWebElement(WebElement element) throws IOException {
         Log.info(LogInfo.LOG_CLICK_WITH_JAVASCRIPT + element);
-        JavascriptExecutor jse = (JavascriptExecutor) this.driver;
-        jse.executeScript(Data.DATA_CLICK_JS, element);
+        try {
+            if (element != null && elementDisplayedByWebElement(element)) {
+                ((JavascriptExecutor) driver).executeScript(Data.DATA_CLICK_JS, element);
+                Log.info("Clic realizado con JavaScript en WebElement: " + element);
+            } else {
+                screenShot();
+                fail("Elemento no visible o nulo para clic con JavaScript: " + element);
+            }
+        } catch (Exception e) {
+            screenShot();
+            Log.error("Error al hacer clic con JavaScript en WebElement: " + element + " → " + e.getMessage());
+            fail(e.getMessage());
+        }
     }
 
     /**
-     * Desplaza la vista hacia un elemento web específico utilizando JavaScript.
-     * Este método emplea un script de JavaScript para asegurar que el elemento
-     * esté visible dentro de la ventana del navegador.
+     * Desplaza la vista del navegador hacia el {@link WebElement} proporcionado usando JavaScript.
+     * Si el elemento es nulo o no está visible, toma un screenshot y falla la ejecución.
      *
-     * @param element el elemento web hacia el cual se desea desplazar la vista.
+     * @param element El {@link WebElement} al que se desea navegar.
+     * @throws IOException Si ocurre un error al desplazar la vista mediante JavaScript.
      */
-    public void navigateToWebElementWithJavascript(WebElement element) {
-        ((JavascriptExecutor) this.driver).executeScript(Data.DATA_SCROLL_INTO_VIEW_TRUE_JS, element);
+    public void navigateToWebElementWithJavascript(WebElement element) throws IOException {
+        Log.info(LogInfo.LOG_NAVIGATE_TO_LOCATOR_WITH_JAVASCRIPT + element);
+        try {
+            if (element != null && elementDisplayedByWebElement(element)) {
+                ((JavascriptExecutor) driver).executeScript(Data.DATA_SCROLL_INTO_VIEW_TRUE_JS, element);
+                Log.info("Navegación realizada con JavaScript hacia WebElement: " + element);
+            } else {
+                screenShot();
+                fail("Elemento nulo o no visible para navegación con JavaScript: " + element);
+            }
+        } catch (Exception e) {
+            screenShot();
+            Log.error("Error al navegar con JavaScript hacia WebElement: " + element + " → " + e.getMessage());
+            fail(e.getMessage());
+        }
     }
 
     /**
-     * Desplaza la vista hacia un elemento web especificado mediante JavaScript.
-     * Este método utiliza un script de JavaScript para garantizar que el elemento
-     * identificado por el localizador sea visible dentro de la ventana del navegador.
+     * Desplaza la vista del navegador hacia el elemento identificado por el {@link By} proporcionado usando JavaScript.
+     * Incluye una espera breve antes de la navegación. Si el elemento es nulo o no está visible, toma un screenshot y falla la ejecución.
      *
-     * @param locator el localizador del elemento web hacia el cual se desea desplazar la vista
-     *                (por ejemplo, By.xpath, By.id, etc.).
+     * @param locator El {@link By} que identifica el elemento al que se desea navegar.
+     * @throws IOException Si ocurre un error al desplazar la vista mediante JavaScript.
      */
-    public void navigateToLocatorWithJavascript(By locator) {
-        ((JavascriptExecutor) this.driver).executeScript(Data.DATA_SCROLL_INTO_VIEW_TRUE_JS, findElement(locator));
+    public void navigateToLocatorWithJavascript(By locator) throws IOException {
+        Log.info(LogInfo.LOG_NAVIGATE_TO_LOCATOR_WITH_JAVASCRIPT + locator);
+        threadWait(2000L);
+        try {
+            WebElement element = findElement(locator);
+            if (element != null && elementDisplayedByWebElement(element)) {
+                ((JavascriptExecutor) driver).executeScript(Data.DATA_SCROLL_INTO_VIEW_TRUE_JS, element);
+                Log.info("Navegación realizada con JavaScript hacia locator: " + locator);
+            } else {
+                screenShot();
+                fail("Elemento nulo o no visible para navegación con JavaScript: " + locator);
+            }
+        } catch (Exception e) {
+            screenShot();
+            Log.error("Error al navegar con JavaScript hacia locator: " + locator + " → " + e.getMessage());
+            fail(e.getMessage());
+        }
     }
 
     /**
-     * Extrae un valor específico de un archivo JSON basado en una clave proporcionada.
-     * Este método registra información sobre la fuente del archivo JSON y la clave buscada,
-     * analiza el contenido del archivo y devuelve el valor correspondiente a la clave.
+     * Obtiene de manera segura un valor de un archivo JSON dado su clave.
+     * Si el dato no existe o hay un error leyendo el archivo, toma un screenshot y falla la ejecución.
      *
-     * @param jsonData la clave del dato dentro del archivo JSON que se desea obtener.
-     * @param source   la ruta de la fuente del archivo JSON.
-     * @return el valor correspondiente a la clave especificada dentro del archivo JSON.
-     * @throws FileNotFoundException si el archivo JSON no se encuentra en la ubicación especificada.
-     * @throws IOException           si ocurre un error durante la lectura del archivo JSON.
-     * @throws ParseException        si ocurre un error al analizar el archivo JSON.
+     * @param jsonData La clave del dato que se desea obtener del JSON.
+     * @param source   La ruta del archivo JSON.
+     * @return El valor correspondiente a la clave proporcionada.
+     * @throws IOException    Si ocurre un error de entrada/salida al leer el archivo.
+     * @throws ParseException Si ocurre un error al parsear el JSON.
      */
-    public String getJsonData(String jsonData, String source) throws FileNotFoundException, IOException, ParseException {
+    public String getJsonDataSafe(String jsonData, String source) throws IOException, ParseException {
         Log.info(LogInfo.LOG_GET_JSON_DATA_FROM_FILE + source);
-        Object obj = new JSONParser().parse(new FileReader(source));
-        JSONObject jo = (JSONObject) obj;
-        String data = (String) jo.get(jsonData);
-        Log.info(LogInfo.LOG_JSON_DATA_OBTAINED + data);
-        return data;
+        try {
+            Object obj = new JSONParser().parse(new FileReader(source));
+            JSONObject jo = (JSONObject) obj;
+            String data = (String) jo.get(jsonData);
+            if (data == null) {
+                screenShot();
+                fail("No se encontró el dato '" + jsonData + "' en el archivo JSON: " + source);
+            }
+            Log.info(LogInfo.LOG_JSON_DATA_OBTAINED + data);
+            return data;
+        } catch (FileNotFoundException e) {
+            screenShot();
+            Log.error("Archivo JSON no encontrado: " + source + " → " + e.getMessage());
+            fail("Archivo JSON no encontrado: " + e.getMessage());
+        } catch (IOException | ParseException e) {
+            screenShot();
+            Log.error("Error leyendo JSON desde: " + source + " → " + e.getMessage());
+            fail("Error leyendo JSON: " + e.getMessage());
+        }
+        return null;
     }
 
     /**
-     * Extrae un valor específico de un archivo JSON basado en una clave proporcionada.
-     * Este método registra información sobre la fuente del archivo JSON y la clave buscada,
-     * analiza el contenido del archivo y devuelve el valor correspondiente a la clave en
-     * este caso un valor de tipo String.
+     * Obtiene un valor de un archivo JSON usando un objeto y una clave específica.
+     * Si el archivo no existe o el dato no se encuentra, toma un screenshot y falla la ejecución.
      *
-     * @param object la clave del objeto que contiene la clave del dato que se quiere obtener.
-     * @param data   la clave del dato dentro del archivo JSON que se desea obtener.
-     * @param source la ruta de la fuente del archivo JSON.
-     * @return el valor correspondiente a la clave especificada dentro del archivo JSON.
-     * @throws IOException si ocurre un error durante la lectura del archivo JSON.
+     * @param object El nombre del objeto en el JSON.
+     * @param data   La clave dentro del objeto que se desea obtener.
+     * @param source La ruta del archivo JSON.
+     * @return El valor como String correspondiente al objeto y clave proporcionados.
+     * @throws IOException Si ocurre un error de lectura del archivo JSON.
      */
     public String getJsonString(String object, String data, String source) throws IOException {
-        // Ruta al archivo JSON
-        File jsonFile = new File(source);
+        Log.info(LogInfo.LOG_GET_JSON_DATA_FROM_FILE + source);
+        try {
+            File jsonFile = new File(source);
+            if (!jsonFile.exists()) {
+                screenShot();
+                Log.error("Archivo JSON no encontrado: " + source);
+                fail("Archivo JSON no encontrado: " + source);
+            }
 
-        // Crear el ObjectMapper y leer el archivo
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(jsonFile);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(jsonFile);
+            String value = root.path(object).path(data).asText();
 
-        // Obtener el valor del campo "parallel"
-        String value = root.path(object).path(data).asText();
+            if (value == null || value.isEmpty()) {
+                screenShot();
+                Log.error("Dato no encontrado en JSON: object=" + object + ", data=" + data);
+                fail("Dato no encontrado en JSON: object=" + object + ", data=" + data);
+            }
 
-        return value;
+            Log.info(LogInfo.LOG_JSON_DATA_OBTAINED + value);
+            return value;
+        } catch (IOException e) {
+            screenShot();
+            Log.error("Error leyendo JSON desde: " + source + " → " + e.getMessage());
+            fail("Error leyendo JSON: " + e.getMessage());
+        }
+        return null;
     }
 
     /**
-     * Extrae un valor específico de un archivo JSON basado en una clave proporcionada.
-     * Este método registra información sobre la fuente del archivo JSON y la clave buscada,
-     * analiza el contenido del archivo y devuelve el valor correspondiente a la clave en
-     * este caso un valor de tipo boolean.
+     * Obtiene un valor booleano de un archivo JSON usando un objeto y una clave específica.
+     * Si el archivo no existe o el dato booleano no se encuentra, toma un screenshot y falla la ejecución.
      *
-     * @param object la clave del objeto que contiene la clave del dato que se quiere obtener.
-     * @param data   la clave del dato dentro del archivo JSON que se desea obtener.
-     * @param source la ruta de la fuente del archivo JSON.
-     * @return el valor correspondiente a la clave especificada dentro del archivo JSON.
-     * @throws IOException si ocurre un error durante la lectura del archivo JSON.
+     * @param object El nombre del objeto en el JSON.
+     * @param data   La clave dentro del objeto cuyo valor booleano se desea obtener.
+     * @param source La ruta del archivo JSON.
+     * @return El valor booleano correspondiente al objeto y clave proporcionados.
+     * @throws IOException Si ocurre un error de lectura del archivo JSON.
      */
     public boolean getJsonBoolean(String object, String data, String source) throws IOException {
-        // Ruta al archivo JSON
-        File jsonFile = new File(source);
+        Log.info(LogInfo.LOG_GET_JSON_DATA_FROM_FILE + source);
+        try {
+            File jsonFile = new File(source);
+            if (!jsonFile.exists()) {
+                screenShot();
+                Log.error("Archivo JSON no encontrado: " + source);
+                fail("Archivo JSON no encontrado: " + source);
+            }
 
-        // Crear el ObjectMapper y leer el archivo
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(jsonFile);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(jsonFile);
+            JsonNode node = root.path(object).path(data);
 
-        // Obtener el valor del campo "parallel"
-        boolean value = root.path(object).path(data).asBoolean();
+            if (node.isMissingNode()) {
+                screenShot();
+                Log.error("Dato booleano no encontrado en JSON: object=" + object + ", data=" + data);
+                fail("Dato booleano no encontrado en JSON: object=" + object + ", data=" + data);
+            }
 
-        return value;
+            boolean value = node.asBoolean();
+            Log.info(LogInfo.LOG_JSON_DATA_OBTAINED + value);
+            return value;
+        } catch (IOException e) {
+            screenShot();
+            Log.error("Error leyendo JSON desde: " + source + " → " + e.getMessage());
+            fail("Error leyendo JSON: " + e.getMessage());
+        }
+        return false;
     }
 
     /**
-     * Extrae un valor específico de un archivo JSON basado en una clave proporcionada.
-     * Este método registra información sobre la fuente del archivo JSON y la clave buscada,
-     * analiza el contenido del archivo y devuelve el valor correspondiente a la clave en
-     * este caso un valor de tipo int.
+     * Obtiene un valor entero de un archivo JSON usando un objeto y una clave específica.
+     * Si el archivo no existe o el dato entero no se encuentra, toma un screenshot y falla la ejecución.
      *
-     * @param object la clave del objeto que contiene la clave del dato que se quiere obtener.
-     * @param data   la clave del dato dentro del archivo JSON que se desea obtener.
-     * @param source la ruta de la fuente del archivo JSON.
-     * @return el valor correspondiente a la clave especificada dentro del archivo JSON.
-     * @throws IOException si ocurre un error durante la lectura del archivo JSON.
+     * @param object El nombre del objeto en el JSON.
+     * @param data   La clave dentro del objeto cuyo valor entero se desea obtener.
+     * @param source La ruta del archivo JSON.
+     * @return El valor entero correspondiente al objeto y clave proporcionados.
+     * @throws IOException Si ocurre un error de lectura del archivo JSON.
      */
     public int getJsonInt(String object, String data, String source) throws IOException {
-        // Ruta al archivo JSON
-        File jsonFile = new File(source);
+        Log.info(LogInfo.LOG_GET_JSON_DATA_FROM_FILE + source);
+        try {
+            File jsonFile = new File(source);
+            if (!jsonFile.exists()) {
+                screenShot();
+                Log.error("Archivo JSON no encontrado: " + source);
+                fail("Archivo JSON no encontrado: " + source);
+            }
 
-        // Crear el ObjectMapper y leer el archivo
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(jsonFile);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(jsonFile);
+            JsonNode node = root.path(object).path(data);
 
-        int value = root.path(object).path(data).asInt();
+            if (node.isMissingNode()) {
+                screenShot();
+                Log.error("Dato entero no encontrado en JSON: object=" + object + ", data=" + data);
+                fail("Dato entero no encontrado en JSON: object=" + object + ", data=" + data);
+            }
 
-        return value;
+            int value = node.asInt();
+            Log.info(LogInfo.LOG_JSON_DATA_OBTAINED + value);
+            return value;
+        } catch (IOException e) {
+            screenShot();
+            Log.error("Error leyendo JSON desde: " + source + " → " + e.getMessage());
+            fail("Error leyendo JSON: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    public void uploadFiles(By locator, String filePath) {
+        Log.info(LogInfo.LOG_UPLOAD + filePath);
+        try {
+            WebElement fileInput = driver.findElement(locator);
+            String absolutePath = Paths.get(filePath).toAbsolutePath().toString();
+            fileInput.sendKeys(absolutePath);
+            Log.info("Archivo subido correctamente: " + absolutePath);
+        } catch (Exception e) {
+            Log.error("Error subiendo archivo: " + filePath + " → " + e.getMessage());
+            screenShot();
+            fail("No se pudo subir el archivo: " + filePath);
+        }
     }
 
     /**
-     * Sube un archivo al sistema utilizando un campo de carga de archivos localizado por un selector específico.
-     * Este método registra información sobre el archivo a cargar y utiliza el localizador proporcionado
-     * para encontrar el elemento correspondiente, enviando la ruta del archivo al campo de entrada.
+     * Descarga archivos de la aplicación web mediante un locator, espera a que la descarga
+     * finalice, los mueve a un directorio de evidencia y los adjunta a los reportes de Allure.
      *
-     * @param locator  el localizador del campo de carga de archivos
-     *                 (por ejemplo, By.xpath, By.id, etc.).
-     * @param filePath la ruta del archivo que se desea cargar.
+     * @param fileType la extensión o tipo de archivo a descargar (por ejemplo, ".pdf")
+     * @param locator  el By que localiza el elemento que inicia la descarga
+     * @throws IOException si ocurre un error durante la descarga, creación de directorios o manejo de archivos
      */
-    public void uploadFiles(By locator, String filePath) {
-        Log.info(LogInfo.LOG_UPLOAD + filePath);
-        WebElement fileInput = findElement(locator);
-        String absolutePath = Paths.get(filePath).toAbsolutePath().toString();
-        fileInput.sendKeys(absolutePath);
-    }
-
     public void downloadFiles(String fileType, By locator) throws IOException {
         Log.info(LogInfo.LOG_DOWNLOAD_START);
         clickLocator(locator);
 
-        // Obtener la ruta de descarga configurada
-        String downloadPath = getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
+        String downloadPath = getJsonString(
+                ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
                 ExternalData.ED_DOWNLOADS,
-                ExternalData.ED_SOURCE);
-
+                ExternalData.ED_SOURCE
+        );
         String absolutePath = Paths.get(downloadPath).toAbsolutePath().toString();
 
-        // Esperar dinámicamente a que se descargue al menos un archivo .docx
         try {
-            waitForFileDownload(fileType, absolutePath, 30); // Espera hasta 30 segundos
+            waitForFileDownload(fileType, absolutePath, 30);
         } catch (InterruptedException e) {
             Log.error(LogInfo.LOG_DOWNLOAD_ERROR_DYNAMIC_INTERRUPTION + e.getMessage());
             Thread.currentThread().interrupt();
@@ -1220,7 +1394,6 @@ public class Base {
             throw new IOException(e.getMessage());
         }
 
-        // Crear carpeta de evidencias
         String evidencePath = getJsonString(
                 ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
                 ExternalData.ED_EVIDENCES,
@@ -1248,11 +1421,9 @@ public class Base {
                 try {
                     FileUtils.moveFileToDirectory(file, new File(evidencePath), false);
                     Path movedFilePath = Paths.get(evidencePath, file.getName());
-
                     try (InputStream is = Files.newInputStream(movedFilePath)) {
                         Allure.attachment(file.getName(), is);
                     }
-
                     Log.info(LogInfo.LOG_DOWNLOAD_FINISH + file.getName());
                 } catch (IOException e) {
                     Log.error(LogInfo.LOG_DOWNLOAD_ERROR_MOVE_FILES + file.getName() + " - " + e.getMessage());
@@ -1261,187 +1432,225 @@ public class Base {
         }
     }
 
+    /**
+     * Espera a que un archivo del tipo especificado se descargue en un directorio dado.
+     * Ignora archivos parcialmente descargados y lanza excepción si no aparece dentro del tiempo límite.
+     *
+     * @param fileType         extensión del archivo esperado (ej. ".pdf")
+     * @param downloadPath     ruta del directorio de descargas
+     * @param timeoutInSeconds tiempo máximo de espera en segundos
+     * @throws InterruptedException si el hilo de espera es interrumpido
+     * @throws RuntimeException     si no se encuentra el archivo dentro del tiempo límite
+     */
     private void waitForFileDownload(String fileType, String downloadPath, int timeoutInSeconds) throws InterruptedException {
+        //Log.info(LogInfo.LOG_WAIT_FOR_FILE_DOWNLOAD + downloadPath + " (tipo: " + fileType + ")");
         File dir = new File(downloadPath);
         int waited = 0;
+
         while (waited < timeoutInSeconds) {
             File[] files = dir.listFiles((d, name) -> name.endsWith(fileType) &&
                     !name.endsWith(Data.DATA_FILE_TYPE_CRDOWNLOAD));
-            if (files != null && files.length > 0) return;
+            if (files != null && files.length > 0) {
+                //Log.info(LogInfo.LOG_DOWNLOAD_FILE_FOUND + files[0].getName());
+                return;
+            }
             Thread.sleep(1000);
             waited++;
         }
-        throw new RuntimeException(LogInfo.LOG_DOWNLOAD_ERROR_TIMEOUT + downloadPath);
+
+        String errorMsg = LogInfo.LOG_DOWNLOAD_ERROR_TIMEOUT + downloadPath;
+        Log.error(errorMsg);
+        throw new RuntimeException(errorMsg);
     }
 
     /**
-     * Refresca la página web actual en el navegador.
-     * Este método utiliza el controlador de WebDriver para recargar la página en curso.
+     * Refresca la página actual del navegador.
+     * Registra un error y falla la ejecución si no se puede realizar el refresco.
      */
     public void refreshPage() {
-        driver.navigate().refresh();
+        try {
+            //Log.info(LogInfo.LOG_REFRESH_PAGE);
+            driver.navigate().refresh();
+            //Log.info(LogInfo.LOG_PAGE_REFRESHED);
+        } catch (Exception e) {
+            Log.error("Error al refrescar la página: " + e.getMessage());
+            fail("No se pudo refrescar la página: " + e.getMessage());
+        }
     }
 
     /**
-     * Elimina todas las cookies almacenadas en el navegador actual.
-     * Este método utiliza el controlador de WebDriver para borrar todas las cookies
-     * asociadas con la sesión del navegador.
+     * Elimina todas las cookies del navegador.
+     * Registra un error y falla la ejecución si no se pueden eliminar las cookies.
      */
     public void clearCookies() {
-        driver.manage().deleteAllCookies();
+        try {
+            //Log.info(LogInfo.LOG_CLEAR_COOKIES);
+            driver.manage().deleteAllCookies();
+            //Log.info(LogInfo.LOG_COOKIES_CLEARED);
+        } catch (Exception e) {
+            Log.error("Error al eliminar cookies: " + e.getMessage());
+            fail("No se pudieron eliminar las cookies: " + e.getMessage());
+        }
     }
 
     /**
-     * Minimiza la ventana del navegador actual.
-     * Este método utiliza el controlador de WebDriver para reducir la ventana a su estado minimizado.
+     * Minimiza la ventana del navegador.
+     * Registra un error y falla la ejecución si no se puede minimizar la ventana.
      */
     public void minimizeScreen() {
-        driver.manage().window().minimize();
+        try {
+            //Log.info(LogInfo.LOG_MINIMIZE_SCREEN);
+            driver.manage().window().minimize();
+            //Log.info(LogInfo.LOG_SCREEN_MINIMIZED);
+        } catch (Exception e) {
+            Log.error("Error al minimizar la pantalla: " + e.getMessage());
+            fail("No se pudo minimizar la pantalla: " + e.getMessage());
+        }
     }
 
     /**
      * Cierra la ventana actual del navegador.
-     * <p>
-     * Este método utiliza el objeto {@code driver} para cerrar
-     * la ventana activa del navegador. Es parte del proceso de
-     * control y manejo de sesiones en la automatización.
-     * <p>
-     * Nota: Si esta ventana es la única abierta, la sesión del
-     * navegador también se cerrará.
+     * Registra un error y falla la ejecución si no se puede cerrar la ventana.
      */
     public void closeWindow() {
-        driver.close();
+        try {
+            //Log.info(LogInfo.LOG_CLOSE_WINDOW);
+            driver.close();
+            //Log.info(LogInfo.LOG_WINDOW_CLOSED);
+        } catch (Exception e) {
+            Log.error("Error al cerrar la ventana: " + e.getMessage());
+            fail("No se pudo cerrar la ventana: " + e.getMessage());
+        }
     }
 
     /**
      * Abre una nueva ventana del navegador y navega a la URL especificada.
-     * <p>
-     * Este método crea una nueva ventana en la sesión actual utilizando
-     * {@link WebDriver#switchTo()} y {@link WindowType#WINDOW}. Luego,
-     * carga la URL proporcionada en la nueva ventana.
+     * Registra un error y falla la ejecución si no se puede abrir la ventana o cargar la URL.
      *
-     * @param url La dirección web (URL) que se cargará en la nueva ventana.
+     * @param url La dirección web a la que se desea navegar en la nueva ventana.
      */
     public void openWindow(String url) {
-        WebDriver newWindow = driver.switchTo().newWindow(WindowType.WINDOW);
-        newWindow.get(url);
+        try {
+            //Log.info(LogInfo.LOG_OPEN_NEW_WINDOW + url);
+            WebDriver newWindow = driver.switchTo().newWindow(WindowType.WINDOW);
+            newWindow.get(url);
+            //Log.info(LogInfo.LOG_NEW_WINDOW_OPENED + url);
+        } catch (Exception e) {
+            Log.error("Error al abrir nueva ventana con URL " + url + ": " + e.getMessage());
+            fail("No se pudo abrir nueva ventana: " + e.getMessage());
+        }
     }
 
     /**
-     * Maximiza la ventana del navegador actual.
-     * Este método utiliza el controlador de WebDriver para expandir la ventana a su tamaño máximo disponible.
+     * Maximiza la ventana actual del navegador.
+     * Registra un error y falla la ejecución si no se puede maximizar la ventana.
      */
     public void maximizeScreen() {
-        driver.manage().window().maximize();
+        try {
+            //Log.info(LogInfo.LOG_MAXIMIZE_SCREEN);
+            driver.manage().window().maximize();
+            //Log.info(LogInfo.LOG_SCREEN_MAXIMIZED);
+        } catch (Exception e) {
+            Log.error("Error al maximizar la pantalla: " + e.getMessage());
+            fail("No se pudo maximizar la pantalla: " + e.getMessage());
+        }
     }
 
     /**
-     * Limpia todos los archivos y subdirectorios dentro de una carpeta especificada.
-     * Este método utiliza la clase `FileUtils` para eliminar el contenido del directorio
-     * sin borrar la carpeta principal y registra información sobre el proceso.
+     * Limpia todos los archivos contenidos en el directorio especificado.
+     * Si el directorio no existe o no es válido, se registra una advertencia y no se realiza ninguna acción.
      *
-     * @param src la ruta del directorio que se desea limpiar.
-     * @throws IOException si ocurre un error durante la limpieza del directorio.
+     * @param src Ruta del directorio a limpiar.
+     * @throws IOException Si ocurre un error al intentar limpiar el directorio.
      */
     public void cleanFolder(String src) throws IOException {
         Log.info(LogInfo.LOG_CLEAR_DIRECTORY + src);
         File folder = new File(src);
-        FileUtils.cleanDirectory(folder);
+
+        if (!folder.exists() || !folder.isDirectory()) {
+            Log.warn("El directorio no existe o no es un directorio válido: " + src);
+            return;
+        }
+
+        try {
+            FileUtils.cleanDirectory(folder);
+            Log.info("Directorio limpiado correctamente: " + src);
+        } catch (IOException e) {
+            Log.error("Error al limpiar el directorio: " + e.getMessage());
+            throw e;
+        }
     }
 
     /**
-     * Valida que un elemento web identificado por un localizador esté visible en la página.
-     * Este método registra información sobre el localizador proporcionado y utiliza una aserción
-     * para verificar que el elemento está presente y visible, generando un mensaje de error si no lo está.
+     * Valida que el elemento identificado por el locator proporcionado esté presente y visible en la página.
+     * Registra la acción y falla la prueba si el elemento no está visible.
      *
-     * @param locator el localizador del elemento web que se desea validar
-     *                (por ejemplo, By.xpath, By.id, etc.).
+     * @param locator Locator del elemento a validar.
      */
     public void validateElementIsDisplayedByLocator(By locator) {
         Log.info(LogInfo.LOG_ELEMENT_IS_PRESENT + locator);
-        //capturarPantalla();
-        assertEquals(elementDisplayedByLocator(locator), true, Mensajes.MENSAJE_ERROR_TEXTO +
-                locator.toString());
+
+        boolean isDisplayed = elementDisplayedByLocator(locator);
+        assertTrue(isDisplayed, Mensajes.MENSAJE_ERROR_TEXTO + locator.toString());
     }
 
     /**
-     * Valida que el texto de un elemento web coincida con el mensaje esperado.
-     * Este método registra información sobre el mensaje proporcionado, verifica que el texto
-     * del elemento identificado por el localizador coincida con el texto esperado y utiliza una
-     * aserción para generar un mensaje de error si no coinciden.
+     * Valida que el texto del elemento identificado por el locator coincida con el texto esperado.
+     * Registra la acción y falla la prueba si el texto real no coincide con el esperado.
      *
-     * @param mensaje el texto esperado que se desea validar.
-     * @param locator el localizador del elemento web cuyo texto se debe verificar
-     *                (por ejemplo, By.xpath, By.id, etc.).
+     * @param expectedText Texto esperado que debe contener el elemento.
+     * @param locator Locator del elemento cuyo texto se va a validar.
      */
-    public void validateElementText(String mensaje, By locator) {
-        Log.info(LogInfo.LOG_ELEMENT_TEXT_IS_PRESENT + mensaje);
-        assertEquals(mensaje, getTextByLocator(locator), Mensajes.MENSAJE_ERROR_TEXTO);
+    public void validateElementText(String expectedText, By locator) {
+        Log.info(LogInfo.LOG_ELEMENT_TEXT_IS_PRESENT + expectedText);
+
+        String actualText = getTextByLocator(locator);
+        assertEquals(expectedText, actualText,
+                Mensajes.MENSAJE_ERROR_TEXTO + " Locator: " + locator.toString() +
+                        ", Expected: " + expectedText + ", Actual: " + actualText);
     }
 
     /**
-     * Obtiene la fecha actual en un formato especificado.
-     * Este método utiliza la clase `SimpleDateFormat` para dar formato a la fecha actual
-     * según el patrón proporcionado, y registra información sobre la operación.
+     * Devuelve la fecha y hora actual formateada según el patrón especificado.
      *
-     * @param dateFormat el formato deseado para la fecha (por ejemplo, "dd/MM/yyyy").
-     * @return una cadena que representa la fecha actual en el formato especificado.
+     * @param dateFormat Formato de fecha y hora siguiendo los patrones de {@link DateTimeFormatter}.
+     * @return Fecha y hora actual como cadena formateada.
      */
     public String getDate(String dateFormat) {
         Log.info(LogInfo.LOG_GET_DATE);
-        Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+        LocalDateTime now = LocalDateTime.now();
 
-        return simpleDateFormat.format(date);
+        return now.format(formatter);
     }
 
     /**
-     * Genera un nombre de carpeta dinámico utilizando los valores actuales de navegador, nombre de prueba y fecha.
-     * Este método concatena estas tres propiedades separadas por barras invertidas (`\`)
-     * para construir y devolver un nombre de carpeta único.
+     * Genera un nombre de carpeta único para almacenar evidencias de prueba,
+     * combinando el navegador, el nombre del test actual y la fecha/hora actual.
      *
-     * @return una cadena que representa el nombre de la carpeta generada en el formato: "browser\testName\date".
+     * @return Ruta de la carpeta generada como cadena.
+     * @throws IOException Si ocurre un error al obtener la fecha actual.
      */
     public String generateFolderName() throws IOException {
-        return browser + "/" + testName.get() + "/" + date;
+        String currentTestName = (testName.get() != null) ? testName.get() : "UnknownTest";
+        String currentDate = (date != null) ? date : getDate("yyyy-MM-dd_HH-mm-ss");
+
+        return Paths.get(browser, currentTestName, currentDate).toString();
     }
 
     /**
-     * Valida el código de estado y la línea de estado de una respuesta HTTP para una URL específica.
-     * Este método utiliza Rest-Assured para enviar una solicitud GET al endpoint proporcionado y
-     * verifica que el código de estado y la línea de estado coincidan con los valores esperados.
-     * También integra Allure para generar información de trazabilidad en los reportes.
+     * Valida todos los enlaces presentes en la página actual.
+     * <p>
+     * Clasifica los enlaces en enlaces válidos, enlaces rotos, enlaces nulos/vacíos
+     * y enlaces que generan errores de servidor. Además, captura una captura
+     * de pantalla al inicio del proceso y genera un reporte con el estado de cada enlace.
      *
-     * @param url        la URL del endpoint al cual se realizará la solicitud GET.
-     * @param statusCode el código de estado esperado de la respuesta HTTP.
-     * @param statusLine la línea de estado esperada de la respuesta HTTP.
-     */
-    public void validateStatusCode(String url, int statusCode, String statusLine) {
-        // Given
-        given()
-                .filter(new AllureRestAssured())
-                // When
-                .when()
-                .get(url)
-                // Then
-                .then()
-                .statusCode(statusCode)
-                .statusLine(statusLine);
-    }
-
-    /**
-     * Verifica los enlaces en la página web actual y categoriza su estado en varias listas.
-     * Este método identifica todos los enlaces presentes en la página y realiza validaciones
-     * para clasificarlos en cuatro categorías: enlaces rotos, enlaces correctos, enlaces nulos
-     * y enlaces con errores de servidor. Además, genera registros y adjuntos para su trazabilidad
-     * en el reporte de Allure.
-     *
-     * <p>El proceso incluye validaciones de enlaces comunes, enlaces especiales como API calls
-     * y maneja posibles excepciones. Proporciona un informe detallado al final del test.</p>
+     * @throws IOException Si ocurre un error al procesar la validación o los reportes.
      */
     public void verifyLinks() throws IOException {
         Log.info(LogInfo.LOG_LINK_VALIDATION_START);
         screenShot();
+
         List<WebElement> links = findElements(By.tagName(Data.DATA_LINK));
 
         List<String> brokenLinks = new ArrayList<>();
@@ -1449,146 +1658,162 @@ public class Base {
         List<String> nullLinks = new ArrayList<>();
         List<String> serverLinks = new ArrayList<>();
 
-        JavascriptExecutor js = (JavascriptExecutor) driver;
+        for (WebElement link : links) {
+            String url = link.getDomProperty(Data.DATA_HREF);
+            Log.info("Verificando link: " + url);
 
-        HttpURLConnection httpURLConnection;
-
-        int responseCode;
-        String url;
-
-        for (int i = 0; i <= links.size() - 1; i++) {
-            url = links.get(i).getDomProperty(Data.DATA_HREF);
-            Log.info(LogInfo.LOG_LINK_VALIDATION_FOUND + url);
-
-            //Verifica si la url no es nula
-            if (url == null || url.isEmpty()) {
-                Log.warn(LogInfo.LOG_LINK_VALIDATION_NULL + url);
-                Log.info(LogInfo.LOG_SEPARATE);
+            if (isNullOrEmpty(url)) {
                 nullLinks.add(url);
+                logAndAttach("Link nulo o vacío: " + url, Data.DATA_ALLURE_NULL_LINK);
+                continue;
+            }
+
+            if (url.startsWith(Data.DATA_JS)) {
+                verifySpecialLink(link, okLinks, brokenLinks);
             } else {
-                Log.warn(LogInfo.LOG_LINK_VALIDATION_ESPECIAL);
-                //Verificación de enlaces comunes
-                if (!url.startsWith(Data.DATA_JS)) {
-                    Log.warn(LogInfo.LOG_LINK_VALIDATION_NORMAL);
-
-                    try {
-                        URI uri = new URI(url);
-                        URL urla = uri.toURL();
-
-                        httpURLConnection = (HttpURLConnection) (urla.openConnection());
-                        httpURLConnection.setRequestMethod(Data.DATA_HEAD);
-                        httpURLConnection.connect();
-                        responseCode = httpURLConnection.getResponseCode();
-
-                        if (responseCode > Data.DATA_STATUS_CODE_400) {
-                            Log.warn(LogInfo.LOG_LINK_VALIDATION_BROKEN + url);
-                            Log.info(LogInfo.LOG_SEPARATE);
-                            brokenLinks.add(url);
-                        } else {
-                            Log.info(LogInfo.LOG_LINK_VALIDATION_OK + url);
-                            Log.info(LogInfo.LOG_SEPARATE);
-                            okLinks.add(url);
-                        }
-                    } catch (Exception e) {
-                        Log.warn(e.getMessage());
-                        Log.info(LogInfo.LOG_SEPARATE);
-                        serverLinks.add(url);
-                    }
-                } else {
-                    //Verificación de enlaces especiales como API CALLS
-
-                    Log.info(LogInfo.LOG_LINK_VALIDATION_IS_ESPECIAL);
-                    js.executeScript(Data.DATA_SCROLL_INTO_VIEW_JS, links.get(i));
-                    clickWebElement(links.get(i));
-                    //esperarDisponibilidadDeElemento(Elements.linkResponse);
-                    //buscarElemento(links.get(i), Elements.linkinicio, Elements.linkfin);
-
-                    try {
-                        //System.out.println("VALID LINK API CALL: " + obtenerTexto(links.get(i)) + " - " + obtenerTexto(Elements.linkResponse));
-                        Log.info(LogInfo.LOG_LINK_VALIDATION_OK + getTextByWebElement(links.get(i)));
-                        Log.info(LogInfo.LOG_SEPARATE);
-                        okLinks.add(url);
-                    } catch (NoSuchElementException noSuchElementException) {
-                        Log.error(LogInfo.LOG_LINK_VALIDATION_BROKEN + getTextByWebElement(links.get(i)));
-                        Log.error(noSuchElementException.getMessage());
-                        Log.info(LogInfo.LOG_SEPARATE);
-                        brokenLinks.add(url);
-                    }
-                }
+                verifyStandardLink(url, okLinks, brokenLinks, serverLinks);
             }
         }
 
-        //Output del test
-        Log.info(LogInfo.LOG_LINK_VALIDATION_TOTAL + links.size());
-        Allure.attachment(LogInfo.LOG_LINK_VALIDATION_TOTAL, Integer.toString(links.size()));
-        Log.info(LogInfo.LOG_LINK_VALIDATION_TOTAL_OK + okLinks.size());
-        Allure.attachment(LogInfo.LOG_LINK_VALIDATION_TOTAL_OK, Integer.toString(okLinks.size()));
-        Log.info(LogInfo.LOG_LINK_VALIDATION_TOTAL_BROKEN + brokenLinks.size());
-        Allure.attachment(LogInfo.LOG_LINK_VALIDATION_TOTAL_BROKEN, Integer.toString(brokenLinks.size()));
-        Log.info(LogInfo.LOG_LINK_VALIDATION_TOTAL_NULL + nullLinks.size());
-        Allure.attachment(LogInfo.LOG_LINK_VALIDATION_TOTAL_NULL, Integer.toString(nullLinks.size()));
-        Log.info(LogInfo.LOG_LINK_VALIDATION_SERVER_DOWN + serverLinks.size());
-        Allure.attachment(LogInfo.LOG_LINK_VALIDATION_SERVER_DOWN, Integer.toString(serverLinks.size()));
+        // Reporte final
+        reportLinkValidation(links.size(), okLinks, brokenLinks, nullLinks, serverLinks);
+    }
 
-        if (!brokenLinks.isEmpty()) {
-            Log.info(LogInfo.LOG_SEPARATE);
-            Log.info(LogInfo.LOG_LINK_VALIDATION_BROKEN_LIST);
+    /**
+     * Verifica si una cadena de texto es nula o está vacía.
+     *
+     * @param url La cadena de texto a verificar.
+     * @return true si la cadena es nula o está vacía; false en caso contrario.
+     */
+    private boolean isNullOrEmpty(String url) {
+        return url == null || url.isEmpty();
+    }
 
-            for (String brokenLink : brokenLinks) {
-                Log.error(brokenLink);
-                Allure.attachment(Data.DATA_ALLURE_BROKEN_LINK, brokenLink);
+    /**
+     * Registra un mensaje en los logs y lo adjunta como evidencia en Allure.
+     *
+     * @param logMessage      El mensaje que se desea registrar y adjuntar.
+     * @param attachmentName  El nombre que se usará para la evidencia en Allure.
+     */
+    private void logAndAttach(String logMessage, String attachmentName) {
+        Log.info(logMessage);
+        Allure.attachment(attachmentName, logMessage);
+    }
+
+    /**
+     * Verifica el estado de un enlace estándar (no JavaScript) realizando una solicitud HTTP HEAD.
+     * Dependiendo del código de respuesta, clasifica el enlace como válido, roto o con error de servidor.
+     *
+     * @param url          La URL del enlace a verificar.
+     * @param okLinks      Lista donde se agregan los enlaces válidos.
+     * @param brokenLinks  Lista donde se agregan los enlaces que devuelven códigos de error HTTP (>= 400).
+     * @param serverLinks  Lista donde se agregan los enlaces que no se pueden conectar debido a errores de servidor u otras excepciones.
+     */
+    private void verifyStandardLink(String url, List<String> okLinks, List<String> brokenLinks, List<String> serverLinks) {
+        HttpURLConnection connection = null;
+        try {
+            URI uri = new URI(url);
+            URL urla = uri.toURL();
+
+            connection = (HttpURLConnection) urla.openConnection();
+            connection.setRequestMethod("HEAD");
+            connection.connect();
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode >= 400) {
+                brokenLinks.add(url);
+                logAndAttach("Link roto: " + url + " - Código: " + responseCode, Data.DATA_ALLURE_BROKEN_LINK);
+            } else {
+                okLinks.add(url);
+                Log.info("Link OK: " + url);
             }
-        }
-
-        if (!nullLinks.isEmpty()) {
-            Log.info(LogInfo.LOG_SEPARATE);
-            Log.info(LogInfo.LOG_LINK_VALIDATION_NULL_LIST);
-
-            for (String nullLink : nullLinks) {
-                Log.error(nullLink);
-                Allure.attachment(Data.DATA_ALLURE_NULL_LINK, nullLink);
-            }
-        }
-
-        if (!serverLinks.isEmpty()) {
-            Log.info(LogInfo.LOG_SEPARATE);
-            Log.info(LogInfo.LOG_LINK_VALIDATION_SERVER_DOWN_LIST);
-
-            for (String serverLink : serverLinks) {
-                Log.error(serverLink);
-                Allure.attachment(Data.DATA_SERVER_LINK, serverLink);
+        } catch (Exception e) {
+            serverLinks.add(url);
+            logAndAttach("Error de conexión con el servidor para: " + url + " - " + e.getMessage(), Data.DATA_SERVER_LINK);
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
             }
         }
     }
 
     /**
-     * Genera un número RUT chileno aleatorio en formato estándar.
-     * <p>
-     * Este método crea un número aleatorio de 8 dígitos y calcula el
-     * dígito verificador correspondiente utilizando el método
-     * {@code calculateVerifyDigit}. Luego, devuelve el RUT como una
-     * cadena con el formato "XXXXXXXX-Y".
+     * Verifica un enlace especial, registrando si está funcionando o roto.
      *
-     * @return El número RUT generado, incluyendo el dígito verificador.
+     * @param link el elemento WebElement del enlace
+     * @param okLinks lista para los enlaces válidos
+     * @param brokenLinks lista para los enlaces rotos
+     */
+    private void verifySpecialLink(WebElement link, List<String> okLinks, List<String> brokenLinks) {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        try {
+            js.executeScript(Data.DATA_SCROLL_INTO_VIEW_JS, link);
+            clickWebElement(link);
+
+            String linkText = getTextByWebElement(link);
+            okLinks.add(linkText);
+            Log.info("Link especial OK: " + linkText);
+        } catch (NoSuchElementException e) {
+            String linkText = getTextByWebElement(link);
+            brokenLinks.add(linkText);
+            Log.error("Link especial roto: " + linkText + " - " + e.getMessage());
+        }
+    }
+
+    /**
+     * Genera un reporte de validación de enlaces, registrando y adjuntando los resultados en Allure.
+     *
+     * @param totalLinks total de enlaces encontrados
+     * @param okLinks lista de enlaces válidos
+     * @param brokenLinks lista de enlaces rotos
+     * @param nullLinks lista de enlaces nulos
+     * @param serverLinks lista de enlaces con error de servidor
+     */
+    private void reportLinkValidation(int totalLinks, List<String> okLinks, List<String> brokenLinks,
+                                      List<String> nullLinks, List<String> serverLinks) {
+        Log.info("Total de links encontrados: " + totalLinks);
+        Allure.attachment("Total Links", String.valueOf(totalLinks));
+
+        Log.info("Links OK: " + okLinks.size());
+        Allure.attachment("Total OK", String.valueOf(okLinks.size()));
+
+        Log.info("Links Rotos: " + brokenLinks.size());
+        Allure.attachment("Total Rotos", String.valueOf(brokenLinks.size()));
+        brokenLinks.forEach(link -> Allure.attachment("Link Roto", link));
+
+        Log.info("Links Nulos: " + nullLinks.size());
+        Allure.attachment("Total Nulos", String.valueOf(nullLinks.size()));
+        nullLinks.forEach(link -> Allure.attachment("Link Nulo", link));
+
+        Log.info("Links con error de servidor: " + serverLinks.size());
+        Allure.attachment("Total Server Down", String.valueOf(serverLinks.size()));
+        serverLinks.forEach(link -> Allure.attachment("Server Down", link));
+    }
+
+    /**
+     * Genera un RUT chileno aleatorio con su dígito verificador.
+     *
+     * @return un RUT válido en formato "XXXXXXXX-X"
      */
     public String generateRUT() {
         Random random = new Random();
-        int numero = random.nextInt(100000000); // Genera un número aleatorio de 8 dígitos
+        int numero = random.nextInt(100000000);
         char digitoVerificador = calculateVerifyDigit(numero);
-        return String.format("%08d-%c", numero, digitoVerificador);
+
+        String rutBase = String.valueOf(numero).replaceFirst("^0+", "");
+
+        if (rutBase.isEmpty()) {
+            rutBase = "0";
+        }
+
+        return String.format("%s-%c", rutBase, digitoVerificador);
     }
 
     /**
-     * Calcula el dígito verificador (DV) de un número según el algoritmo chileno de RUT.
-     * <p>
-     * Este método toma un número entero y aplica una serie de cálculos
-     * para determinar su dígito verificador. El dígito verificador puede ser:
-     * - Un número entre 0 y 9.
-     * - 'K' si el resultado del cálculo es 10.
+     * Calcula el dígito verificador de un RUT chileno a partir de su número base.
      *
-     * @param numero El número entero cuyo dígito verificador se va a calcular.
-     *               Por lo general, representa la parte numérica de un RUT chileno.
-     * @return El dígito verificador como un carácter ('0' - '9' o 'K').
+     * @param numero el número base del RUT
+     * @return el dígito verificador como carácter ('0'-'9' o 'K')
      */
     public static char calculateVerifyDigit(int numero) {
         int suma = 0;
@@ -1612,60 +1837,72 @@ public class Base {
 
     /**
      * Configura opciones personalizadas para el navegador Chrome.
-     * Este método define preferencias específicas para la descarga de archivos, activa el modo headless
-     * para ejecutar el navegador sin interfaz gráfica, ajusta el tamaño de la ventana del navegador
-     * y asigna el navegador Chrome como predeterminado.
+     * <p>
+     * Ajusta la carpeta de descargas, preferencias del navegador, modo headless,
+     * visibilidad del navegador y tamaño de ventana según la configuración.
      *
-     * @param downloadFilePath la ruta de directorio donde se almacenarán los archivos descargados.
-     * @return un objeto `ChromeOptions` con las configuraciones personalizadas aplicadas.
-     * @see ChromeOptions
+     * @param downloadFilePath ruta opcional para la carpeta de descargas
+     * @return un objeto ChromeOptions configurado
+     * @throws IOException si ocurre un error al leer la configuración o crear directorios
      */
     public ChromeOptions chromeCustomConfiguration(String downloadFilePath) throws IOException {
         Log.info(LogInfo.LOG_CHROME_CONFIGURATION);
-        ChromeOptions optionChrome = new ChromeOptions();
 
+        ChromeOptions chromeOptions = new ChromeOptions();
+
+        // Determinar la ruta de descarga
         String downloadPath = (downloadFilePath != null && !downloadFilePath.isEmpty())
                 ? downloadFilePath
                 : System.getProperty(Data.DATA_SYSTEM_PROPERTY_TMPDIR) + Data.DATA_BROWSER_DEFAULT_DOWNLOAD_DIRECTORY;
 
-        String path = getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
+        // Obtener la ruta absoluta desde el JSON de configuración
+        String pathFromJson = getJsonString(
+                ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
                 ExternalData.ED_DOWNLOADS,
-                ExternalData.ED_SOURCE);
+                ExternalData.ED_SOURCE
+        );
 
-        String absolutePath = Paths.get(path).toAbsolutePath().toString();
-        new File(downloadPath).mkdirs();
+        String absolutePath = Paths.get(pathFromJson).toAbsolutePath().toString();
 
+        // Crear directorio de descarga si no existe
+        File downloadDir = new File(absolutePath);
+        if (!downloadDir.exists()) {
+            downloadDir.mkdirs();
+        }
+
+        // Configurar preferencias del navegador
         Map<String, Object> prefs = new HashMap<>();
         prefs.put(Data.DATA_BROWSER_DOWNLOAD_DIRECTORY, absolutePath);
         prefs.put(Data.DATA_BROWSER_DOWNLOAD_PROMPT, false);
         prefs.put(Data.DATA_BROWSER_SETTINGS_POPUPS, 0);
         prefs.put(Data.DATA_BROWSER_OPEN_PDF_EXTERNAL, true);
-        prefs.put("profile.password_manager_leak_detection", false);
+        prefs.put(Data.DATA_BROWSER_PASSWORD_LEAK_DETECTION, false);
 
-        optionChrome.setExperimentalOption(Data.DATA_BROWSER_DOWNLOAD_PREFS, prefs);
+        chromeOptions.setExperimentalOption(Data.DATA_BROWSER_DOWNLOAD_PREFS, prefs);
 
+        // Configurar modo headless si está activado
         if (getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
                 ExternalData.ED_HEADLESS, ExternalData.ED_SOURCE)) {
-            optionChrome.addArguments(BrowserConfiguration.BC_PREF_HEADLESS);
+            chromeOptions.addArguments(Data.BC_PREF_HEADLESS);
         }
 
-        optionChrome.addArguments(getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
-                ExternalData.ED_BROWSER_SIZE, ExternalData.ED_SOURCE));
+        // Configurar navegador oculto si está activado
+        if (getJsonBoolean(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
+                ExternalData.ED_WEBDRIVER_HIDDEN, ExternalData.ED_SOURCE)) {
+            chromeOptions.addArguments(Data.DATA_WEBDRIVER_HIDDEN);
+        }
+
+        // Configurar tamaño de ventana
+        String browserSize = getJsonString(ExternalData.ED_OBJECT_WEB_DRIVER_CONFIGURATION,
+                ExternalData.ED_BROWSER_SIZE, ExternalData.ED_SOURCE);
+        chromeOptions.addArguments(browserSize);
 
         Base.browser = Data.DATA_BROWSER_CHROME;
 
-        return optionChrome;
+        return chromeOptions;
     }
 
-    /**
-     * Configura opciones personalizadas para el navegador Edge.
-     * Este método activa el modo headless para ejecutar el navegador sin interfaz gráfica,
-     * ajusta el tamaño de la ventana del navegador y asigna Edge como el navegador predeterminado.
-     *
-     * @return un objeto `EdgeOptions` con las configuraciones personalizadas aplicadas.
-     * @see EdgeOptions
-     */
-    public EdgeOptions edgeCustomConfiguration() {
+    /*public EdgeOptions edgeCustomConfiguration() {
         Log.info(LogInfo.LOG_EDGE_CONFIGURATION);
         EdgeOptions optionEdge = new EdgeOptions();
 
@@ -1680,22 +1917,9 @@ public class Base {
         Base.browser = Data.DATA_BROWSER_EDGE;
 
         return optionEdge;
-    }
+    }*/
 
-    /**
-     * Configura opciones personalizadas para Firefox
-     * Este método activa el modo headless para ejecutar el navegador sin interfaz gráfica,
-     * ajusta el tamaño de la ventana del navegador y asigna Edge como el navegador predeterminado.
-     *
-     * @param key              Clave de la preferencia a configurar.
-     * @param value            Valor entero de la preferencia.
-     * @param directory        Clave de la preferencia para la carpeta de descarga.
-     * @param downloadFilePath Ruta de descarga donde se guardarán los archivos.
-     * @return Una instancia de {@link FirefoxOptions} configurada con las opciones proporcionadas.
-     * @see FirefoxOptions
-     * @see FirefoxProfile
-     */
-    public FirefoxOptions firefoxCustomConfiguration(String key, int value, String directory, String downloadFilePath) {
+    /*public FirefoxOptions firefoxCustomConfiguration(String key, int value, String directory, String downloadFilePath) {
         Log.info(LogInfo.LOG_FIREFOX_CONFIGURATION);
         FirefoxProfile profile = new FirefoxProfile();
         FirefoxOptions optionFirefox = new FirefoxOptions();
@@ -1715,31 +1939,306 @@ public class Base {
         Base.browser = Data.DATA_BROWSER_FIREFOX;
 
         return optionFirefox;
-    }
+    }*/
 
+    /**
+     * Verifica si hay una alerta presente en la página.
+     *
+     * @return true si hay una alerta, false en caso contrario
+     */
     public boolean isAlertPresent() {
-        try {
-            driver.switchTo().alert();
-            return true;
-        } catch (NoAlertPresentException ex) {
-            return false;
-        }
+        return getAlert() != null;
     }
 
-    public void acceptAlert(){
-        if (isAlertPresent()) {
-            Alert alert = driver.switchTo().alert();
+    /**
+     * Acepta la alerta actualmente presente en la página, si existe.
+     */
+    public void acceptAlert() {
+        Alert alert = getAlert();
+        if (alert != null) {
             alert.accept();
+            Log.info("Alerta aceptada.");
         }
     }
 
-    public void dismissAlert(){
-        if (isAlertPresent()) {
-            Alert alert = driver.switchTo().alert();
+    /**
+     * Descarta la alerta actualmente presente en la página, si existe.
+     */
+    public void dismissAlert() {
+        Alert alert = getAlert();
+        if (alert != null) {
             alert.dismiss();
+            Log.info("Alerta descartada.");
         }
     }
 
+    /**
+     * Obtiene la alerta actualmente presente en la página.
+     *
+     * @return el objeto Alert si existe, o null si no hay ninguna alerta
+     */
+    private Alert getAlert() {
+        try {
+            return driver.switchTo().alert();
+        } catch (NoAlertPresentException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Selecciona una opción de un elemento interactivo (como un menú desplegable) en la página.
+     *
+     * @param elemento1 localizador del campo principal a interactuar
+     * @param elemento2 localizador del elemento clicable para abrir la selección
+     * @param seleccion localizador de la opción a seleccionar
+     * @throws IOException si ocurre un error durante la interacción
+     */
+    public void selectInteractiveOption(By elemento1, By elemento2, By seleccion) throws IOException {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        Actions actions = new Actions(driver);
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        WebElement campo = wait.until(ExpectedConditions.visibilityOfElementLocated(elemento1));
+        actions.moveToElement(campo).perform();
+
+        WebElement select = wait.until(ExpectedConditions.elementToBeClickable(elemento2));
+        select.click();
+
+        WebElement opcion = wait.until(ExpectedConditions.visibilityOfElementLocated(seleccion));
+
+        js.executeScript("arguments[0].click();", opcion);
+    }
+
+    /**
+     * Espera a que los elementos de overlay o spinner desaparezcan de la página.
+     *
+     * @throws IOException si ocurre un error al capturar la pantalla en caso de timeout
+     */
+    private void waitForOverlayToDisappear() throws IOException {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".overlay, .spinner")));
+        } catch (TimeoutException ignored) {
+            Log.error("Error en la espera de overlay");
+            screenShot();
+        }
+    }
+
+    /**
+     * Valida que un elemento web exista, esté visible y habilitado.
+     *
+     * @param element el WebElement a validar
+     * @param locator el localizador del elemento para los mensajes de error
+     */
+    private void validateElement(WebElement element, By locator) {
+        if (element == null) {
+            handleFail(locator, AssertInfo.ASSERT_ELEMENT_NOT_NULL + locator, null);
+        }
+
+        if (!element.isDisplayed()) {
+            handleFail(locator, "Error: El elemento encontrado no está visible en el DOM. Locator: " + locator, null);
+        }
+
+        /*if (!element.isEnabled()) {
+            handleFail(locator, "Error: El elemento encontrado no está habilitado en el DOM. Locator: " + locator, null);
+        }*/
+    }
+
+    /**
+     * Maneja una falla en la prueba: toma captura, registra el error y falla la aserción.
+     *
+     * @param locator el localizador asociado al error
+     * @param message mensaje de error a registrar
+     * @param e excepción opcional que causó la falla
+     */
+    private void handleFail(By locator, String message, Exception e) {
+        screenShot();
+        Log.error(message + (e != null ? ", " + e.getMessage() : ""));
+        Assert.fail(message);
+    }
+
+    /**
+     * Maneja una falla en la prueba sin tomar captura de pantalla: registra el error y falla la aserción.
+     *
+     * @param locator el localizador asociado al error
+     * @param message mensaje de error a registrar
+     * @param e excepción opcional que causó la falla
+     */
+    private void handleFailNoScreenshot(By locator, String message, Exception e) {
+        Log.error(message + (e != null ? ", " + e.getMessage() : ""));
+        Assert.fail(message);
+    }
+
+    /**
+     * Realiza un clic en un switch de Material Design, usando distintos métodos según sea necesario
+     * para garantizar la interacción (clic normal, Actions o evento JS).
+     *
+     * @param locator el localizador del switch a clicar
+     */
+    public void clickMaterialSwitch(By locator) {
+        final int TIMEOUT_SECONDS = 10;
+
+        Log.info("Intentando hacer clic en switch: " + locator);
+
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(TIMEOUT_SECONDS));
+
+            // Esperar que el input esté presente
+            WebElement input = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+
+            // Scroll al centro
+            ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].scrollIntoView({block: 'center', inline: 'center'});", input);
+
+            // Esperar a que sea clickeable
+            wait.until(ExpectedConditions.elementToBeClickable(input));
+
+            try {
+                // Intentar click normal primero
+                input.click();
+                Log.info("Click normal realizado en el switch.");
+                return;
+
+            } catch (ElementClickInterceptedException e) {
+                Log.warn("Click interceptado, reintentando con Actions...");
+
+                Thread.sleep(400); // dar tiempo a posibles animaciones
+
+                // Click con Actions (input invisible pero activo)
+                new Actions(driver)
+                        .moveToElement(input)
+                        .click()
+                        .perform();
+
+                Log.info("Click realizado mediante Actions sobre el switch.");
+                return;
+
+            } catch (Exception e2) {
+                Log.warn("Click normal/Actions falló, intentando MouseEvent JS...");
+
+                // JS: lanza un MouseEvent real para que React lo capture
+                ((JavascriptExecutor) driver).executeScript(
+                        "arguments[0].dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window}));",
+                        input);
+
+                Log.info("Click simulado con MouseEvent JS sobre el switch.");
+                return;
+            }
+
+        } catch (TimeoutException e) {
+            Log.error("Timeout: no se encontró el switch: " + locator);
+        } catch (Exception e) {
+            Log.error("Error al intentar hacer click en el switch: " + locator + " → " + e.getMessage());
+        }
+    }
+
+    /**
+     * Busca un texto en un campo de autocompletado y selecciona la primera opción disponible.
+     *
+     * @param locator el localizador del trigger o campo del autocompletado
+     * @param textToSearch el texto a buscar en el autocompletado
+     */
+    public void selectFirstFromAutocomplete(By locator, String textToSearch) {
+        final int TIMEOUT_SECONDS = 10;
+
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(TIMEOUT_SECONDS));
+
+            // Esperar el trigger visible (por ejemplo, <p>---</p>)
+            WebElement trigger = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+
+            // Mover el mouse sobre el trigger para que se active el campo
+            new Actions(driver).moveToElement(trigger).perform();
+            Thread.sleep(400); // pequeño delay para que se renderice el autocomplete
+
+            // Localizar el input del autocomplete (aparece dinámicamente)
+            WebElement input = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("auto-complete")));
+
+            // Click en el input y escribir el texto de búsqueda
+            input.click();
+            input.clear();
+            input.sendKeys(textToSearch);
+
+            // Esperar a que aparezcan las opciones en el listbox
+            By listOptions = By.cssSelector("ul.MuiAutocomplete-listbox li");
+            wait.until(ExpectedConditions.visibilityOfElementLocated(listOptions));
+
+            // Seleccionar la primera opción de la lista
+            List<WebElement> options = driver.findElements(listOptions);
+            if (!options.isEmpty()) {
+                WebElement firstOption = options.get(0);
+                new Actions(driver).moveToElement(firstOption).click().perform();
+                Log.info("Seleccionada primera opción del autocomplete: " + firstOption.getText());
+            } else {
+                Log.warn("No se encontraron opciones para: " + textToSearch);
+            }
+
+        } catch (Exception e) {
+            Log.error("Error al seleccionar la primera opción del autocomplete: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Selecciona una opción específica de un MUI Select (combobox) en la página.
+     *
+     * @param hoverLocator el localizador del elemento a posicionar el mouse para activar el combobox
+     * @param optionText el texto de la opción a seleccionar
+     */
+    public void selectOptionFromMuiSelect(By hoverLocator, String optionText) {
+        final int TIMEOUT_SECONDS = 10;
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(TIMEOUT_SECONDS));
+
+            // Posicionar el mouse sobre el div inicial para generar el combobox
+            WebElement hoverElement = wait.until(ExpectedConditions.visibilityOfElementLocated(hoverLocator));
+            new Actions(driver).moveToElement(hoverElement).perform();
+
+            // Esperar que aparezca el combobox
+            By comboBoxLocator = By.xpath("//div[p[text()='Es procedente']]//div[@role='combobox']");
+            WebElement comboBox = wait.until(ExpectedConditions.elementToBeClickable(comboBoxLocator));
+            new Actions(driver).moveToElement(comboBox).click().perform();
+
+            // Esperar que aparezca el listado
+            By listItemsLocator = By.cssSelector("ul[role='listbox'] li");
+            wait.until(ExpectedConditions.visibilityOfElementLocated(listItemsLocator));
+
+            // Seleccionar la opción deseada
+            List<WebElement> options = driver.findElements(listItemsLocator);
+            boolean selected = false;
+            for (WebElement option : options) {
+                if (option.getText().trim().equals(optionText)) {
+                    new Actions(driver).moveToElement(option).click().perform();
+                    Log.info("Seleccionada opción: " + optionText);
+                    selected = true;
+                    break;
+                }
+            }
+            if (!selected) {
+                Log.warn("No se encontró la opción: " + optionText);
+            }
+
+        } catch (Exception e) {
+            Log.error("Error al seleccionar opción del MUI Select: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Mueve el cursor del mouse hasta el elemento especificado.
+     *
+     * @param locator el localizador del elemento a donde mover el cursor
+     */
+    public void moveToElement(By locator){
+        WebElement element = findElement(locator);
+        Actions actions = new Actions(driver);
+        actions.moveToElement(element).perform();
+    }
+
+    /**
+     * Cambia el control del WebDriver a una nueva pestaña del navegador abierta.
+     * Espera hasta que haya más de una pestaña y luego selecciona la que no es la original.
+     *
+     * @param driver el WebDriver que controla el navegador
+     */
     public static void switchToNewTab(WebDriver driver) {
         String originalWindow = driver.getWindowHandle();
 

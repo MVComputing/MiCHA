@@ -91,5 +91,14 @@ public class LogInfo {
 	public static final String LOG_DOWNLOAD_ERROR_TYPE_FILES_NOT_FOUND = "No se descargaron archivos de tipo ";
 	public static final String LOG_DOWNLOAD_ERROR_MOVE_FILES = "Error moviendo o adjuntando el archivo: ";
 	public static final String LOG_DOWNLOAD_ERROR_TIMEOUT = "Timeout esperando descarga del archivo en: ";
+	public static final String LOG_NAVIGATE_TO_LOCATOR_WITH_JAVASCRIPT = "Navegando hacia el elemento con javascript: ";
 
+	public static final String LOG_ERROR_FIND_ELEMENT = "No se pudo encontrar el elemento: ";
+	public static final String LOG_ERROR_FIND_ELEMENTS_NOT_FOUND = "No se encontraron elementos con el locator: ";
+	public static final String LOG_ERROR_FIND_ELEMENTS = "Error al buscar elementos con el locator: ";
+	public static final String LOG_ERROR_FIND_ELEMENT_SELECT = "No se pudo encontrar o interactuar con el Select: ";
+	public static final String LOG_ERROR_SELECT_BY_VISIBLE_TEXT = "No se pudo seleccionar la opción en el elemento: ";
+	public static final String LOG_ERROR_GET_TEXT_BY_LOCATOR = "No se pudo obtener el texto del elemento: ";
+	public static final String LOG_ERROR_GET_TEXT_BY_ELEMENT = "No se pudo obtener el texto del WebElement: ";
+	public static final String LOG_ERROR_ = "";
 }
